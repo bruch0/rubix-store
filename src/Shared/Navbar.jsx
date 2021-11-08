@@ -21,7 +21,7 @@ function Navbar() {
   return (
     <Nav>
       <StoreOptions>
-        <Store>
+        <Store to="/">
           <Logo src="Assets/Banner/6.svg" alt="logo" />
           <StoreName>RUBIX STORE</StoreName>
         </Store>
@@ -69,11 +69,17 @@ const StoreOptions = styled.div`
   align-items: center;
 `;
 
-const Store = styled.div`
+const Store = styled(Link)`
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0px;
+  color: black;
+
+  :visited {
+      color: black
+  }
 `;
 
 const Logo = styled.img`

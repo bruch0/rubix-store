@@ -7,15 +7,26 @@ import filterIcon from '../../Assets/Icons/filter.png';
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const [filterDropdown, setFilterDropdown] = useState(false);
+  const [order, setOrder] = useState(false);
   const { search } = useLocation();
   const category = new URLSearchParams(search).get('category');
 
   useEffect(() => {
-    const query = category ? `?category=${category}` : '';
-    axios
-      .get(`http://localhost:4000/products${category ? query : ''}`)
+    let query = category ? `?category=${category}` : '';
+    if (order && category) {
+      query += `&order=${order}`;
+    } else if (order && !category) {
+      query = `?order=${order}`;
+    }
+    axios.get(`http://localhost:4000/products${category || query ? query : ''}`)
       .then((response) => setProducts(response.data));
-  }, [category]);
+  }, [category, order]);
+
+  const handleClickOutside = () => {
+    setTimeout(() => setFilterDropdown(false), 100);
+  };
+
   return (
     <ProductSection>
       <Title>Produtos</Title>
@@ -24,10 +35,36 @@ function Products() {
         <SearchButton>
           <img src={searchIcon} alt="Pesquisar" />
         </SearchButton>
-        <FilterButton>
+        <FilterButton
+          onBlur={handleClickOutside}
+          onClick={() => {
+            if (!filterDropdown) {
+              setFilterDropdown(true);
+            }
+          }}
+        >
           <img src={filterIcon} alt="Pesquisar" />
           <span>Filtro</span>
         </FilterButton>
+        <Dropdown>
+          <DropdownContent enabled={filterDropdown ? 1 : 0}>
+            <DropwdownOption onClick={() => {
+              setOrder('price');
+              setFilterDropdown(false);
+            }}
+            >
+              Maior preço
+            </DropwdownOption>
+
+            <DropwdownOption onClick={() => {
+              setOrder('-price');
+              setFilterDropdown(false);
+            }}
+            >
+              Menor preço
+            </DropwdownOption>
+          </DropdownContent>
+        </Dropdown>
       </Search>
 
       <ProductsDisplay>
@@ -148,6 +185,56 @@ const FilterButton = styled.button`
   }
 `;
 
+const Dropdown = styled.div`
+    display: inline-block;
+    position: absolute;
+    right: 0;
+`;
+
+const DropdownContent = styled.div`
+    width: 7.5vw;
+    height: 60px;
+    background-color: #EBEBEB;
+    border-radius: 22px;
+     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    display: ${(props) => (props.enabled ? 'flex' : 'none')};
+    flex-direction: column;
+    justify-content: space-around;
+    position: absolute;
+    right: 5vw;
+    top: 100%;
+    z-index: 1;
+
+    && p {
+        display: block;
+    }
+
+    @media (max-width: 1000px) {
+        width: 12vw;
+    }
+
+    @media (max-width: 600px) {
+        width: 28vw;
+    }
+`;
+
+const DropwdownOption = styled.p`
+    height: 30%;
+    font-size: 1vw;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+    cursor: pointer;
+
+    @media (max-width: 1000px) {
+        font-size: 1.5vw;
+    }
+
+    @media (max-width: 600px) {
+        font-size: 3vw;
+    }
+`;
+
 const ProductsDisplay = styled.div`
   width: 100%;
   display: grid;
@@ -243,12 +330,24 @@ const AddToCart = styled.button`
     background-color: #43FF4A;
     border-radius: 22px;
     color: transparent;
-    font-size: 25px;
+    font-size: 1.5vw;
     font-weight: 600;
     transition: all .2s;
     border: 0px;
     padding: 0px;
     cursor: pointer;
+
+    @media (max-width: 1000px) {
+        font-size: 2.2vw;
+    }
+
+    @media (max-width: 600px) {
+        font-size: 3.5vw;
+    }
+
+    @media (max-width: 400px) {
+        font-size: 7vw;
+    }
 `;
 
 export default Products;
