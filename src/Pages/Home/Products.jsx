@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
+import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../../Assets/Icons/search.png';
 import filterIcon from '../../Assets/Icons/filter.png';
 
@@ -9,19 +10,28 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [filterDropdown, setFilterDropdown] = useState(false);
   const [order, setOrder] = useState(false);
+  const [productSearch, setProductSearch] = useState('');
   const { search } = useLocation();
   const category = new URLSearchParams(search).get('category');
 
   useEffect(() => {
     let query = category ? `?category=${category}` : '';
+
     if (order && category) {
       query += `&order=${order}`;
     } else if (order && !category) {
       query = `?order=${order}`;
     }
+
+    if ((productSearch && order) || (productSearch && category)) {
+      query += `&search=${productSearch}`;
+    } else if (productSearch) {
+      query = `?search=${productSearch}`;
+    }
+
     axios.get(`http://localhost:4000/products${category || query ? query : ''}`)
       .then((response) => setProducts(response.data));
-  }, [category, order]);
+  }, [category, order, productSearch]);
 
   const handleClickOutside = () => {
     setTimeout(() => setFilterDropdown(false), 100);
@@ -31,7 +41,13 @@ function Products() {
     <ProductSection>
       <Title>Produtos</Title>
       <Search>
-        <SearchBar placeholder="Pesquise aqui" />
+        <SearchBar
+          placeholder="Pesquise aqui"
+          minLength={2}
+          debounceTimeout={100}
+          value={productSearch}
+          onChange={(event) => setProductSearch(event.target.value)}
+        />
         <SearchButton>
           <img src={searchIcon} alt="Pesquisar" />
         </SearchButton>
@@ -118,7 +134,7 @@ const Search = styled.div`
   margin-bottom: 50px;
 `;
 
-const SearchBar = styled.input`
+const SearchBar = styled(DebounceInput)`
   width: 83%;
   height: 35px;
   background-color: #ebebeb;
