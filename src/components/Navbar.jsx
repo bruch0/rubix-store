@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Kaftus from '../assets/fonts/Kaftus.ttf';
 import cart from '../assets/icons/cart.png';
 import categoryIcon from '../assets/icons/category.png';
+import LoginPopUp from './LoginPopUp';
 
 function Navbar() {
   const categories = [
@@ -29,7 +30,7 @@ function Navbar() {
           <Cart to="cart">
             <img src={cart} alt="cart" />
           </Cart>
-          <Action>Login</Action>
+          <Action><LoginPopUp text="Login" /></Action>
           <Action>Cadastre-se</Action>
         </Options>
       </StoreOptions>
