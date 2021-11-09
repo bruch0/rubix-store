@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Kaftus from '../Assets/Fonts/Kaftus.ttf';
-import cart from '../Assets/Icons/cart.png';
-import categoryIcon from '../Assets/Icons/category.png';
+import Kaftus from '../assets/fonts/Kaftus.ttf';
+import cart from '../assets/icons/cart.png';
+import categoryIcon from '../assets/icons/category.png';
 
 function Navbar() {
   const categories = [
