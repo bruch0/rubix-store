@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import styled from 'styled-components';
 import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../../Assets/Icons/search.png';
 import filterIcon from '../../Assets/Icons/filter.png';
+import api from '../../axios';
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -29,7 +29,7 @@ function Products() {
       query = `?search=${productSearch}`;
     }
 
-    axios.get(`http://localhost:4000/products${category || query ? query : ''}`)
+    api.get(`/products${category || query ? query : ''}`)
       .then((response) => setProducts(response.data));
   }, [category, order, productSearch]);
 
