@@ -34,7 +34,7 @@ function Products() {
   }, [category, order, productSearch]);
 
   const handleClickOutside = () => {
-    setTimeout(() => setFilterDropdown(false), 100);
+    setTimeout(() => setFilterDropdown(false), 110);
   };
 
   return (
