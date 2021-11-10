@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
-import api from '../services/api';
+import { api } from '../services/api';
 
 function Products() {
   const [products, setProducts] = useState([]);

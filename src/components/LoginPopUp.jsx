@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import '../shared/styles/modal.css';
 import StoreName from './StoreName';
@@ -9,9 +10,10 @@ import { ReactComponent as HidePassIcon } from '../assets/icons/hide-pass.svg';
 import { ReactComponent as ShowPassIcon } from '../assets/icons/show-pass.svg';
 import { ReactComponent as CloseIcon } from '../assets/icons/close.svg';
 import ButtonForm from './ButtonForm';
+import postSignIn from '../services/api';
 
 export default function LoginPopUp({ text }) {
-  // eslint-disable-next-line react/button-has-type
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,6 +23,13 @@ export default function LoginPopUp({ text }) {
   function submit(event) {
     event.preventDefault();
     setIsLoading(true);
+    postSignIn(email, password)
+      .then((res) => {
+        console.log(res.data);
+        setIsLoading(false);
+        navigate('/');
+      })
+      .catch(() => setIsLoading(false));
   }
 
   return (
@@ -59,7 +68,11 @@ export default function LoginPopUp({ text }) {
               <h3>Esqueceu sua senha?</h3>
             </div>
             <div>
-              <ButtonForm type="submit" isLoading={isLoading}>
+              <ButtonForm
+                type="submit"
+                isLoading={isLoading}
+                disabled={isLoading}
+              >
                 Entrar
               </ButtonForm>
               <h3>Cadastre-se</h3>
@@ -78,7 +91,7 @@ const InputPassContainer = styled.div`
     position: absolute;
     width: 28px;
     height: 28px;
-    bottom: 6px;
+    top: 4px;
     right: 10px;
   }
 `;
@@ -91,6 +104,9 @@ const ContainerLogin = styled.div`
   padding: 20px;
   border-radius: 37px;
   color: #000;
+  p {
+    margin-top: 7px;
+  }
   form {
     display: flex;
     flex-direction: column;
@@ -107,10 +123,6 @@ const ContainerLogin = styled.div`
   }
   div {
     text-align: center;
-    svg {
-      margin-top: 30px;
-      margin-bottom: 7px;
-    }
   }
   h3 {
     font-size: 16px;
@@ -140,5 +152,4 @@ const CloseButton = styled.button`
   border-radius: 22px;
   border: 0px;
   cursor: pointer;
-
 `;

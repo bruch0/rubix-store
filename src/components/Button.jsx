@@ -11,4 +11,9 @@ export default styled.button`
   font-weight: bold;
   font-size: 18px;
   font-family: 'Quicksand', sans-serif;
+
+  &:disabled {
+    opacity: 60%;
+    cursor: none;
+  }
 `;

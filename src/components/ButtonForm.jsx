@@ -7,7 +7,7 @@ export default function FormButton({ isLoading = false, children, ...props }) {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <Button {...props}>
       {isLoading === true ? (
-        <Loader type="ThreeDots" color="#FFF" height={15} width={50} />
+        <Loader type="ThreeDots" color="#FFF" height={10} width={50} />
       ) : (
         children
       )}
