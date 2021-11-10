@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import Products from '../../components/Products';
+import Banner from '../../components/Banner';
 
 function Home() {
   return (
@@ -10,10 +10,5 @@ function Home() {
     </>
   );
 }
-
-const Banner = styled.div`
-  width: 100%;
-  height: 500px;
-`;
 
 export default Home;
