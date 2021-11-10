@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Logo from './Logo';
 import '../shared/styles/modal.css';
 import StoreName from './StoreName';
@@ -14,9 +14,6 @@ import postSignIn from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPopUp({ text }) {
-  // eslint-disable-next-line no-unused-vars
-  const navigate = useNavigate();
-
   const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -33,7 +30,14 @@ export default function LoginPopUp({ text }) {
         localStorage.setItem('user', JSON.stringify(res.data));
         setIsLoading(false);
       })
-      .catch(() => setIsLoading(false));
+      .catch(() => {
+        Swal.fire({
+          icon: 'error',
+          confirmButtonColor: '#1382e9',
+          text: 'Usuário os senha inválidos',
+        });
+        setIsLoading(false);
+      });
   }
 
   return (
