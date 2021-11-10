@@ -50,26 +50,22 @@
 			</div>
 			<p class="title nao-selecionavel">A maior loja de cubos da<br> América Latina</p>
 		</div>`
-			
-		const insertCube = () => {
-			const banner = document.querySelector('#banner');
-			banner.innerHTML = cube;
-		}
-		
-		setTimeout(insertCube, 150);
-		</script>
+	</script>
 	<script>
 		let drag = 0
 		let interval
 		let rotateX = 0
 		let rotateY = 0
+			
+		const insertCube = () => {
+			const banner = document.querySelector('#banner');
+			banner.innerHTML = cube;
+		}
 
-		const startMoving = () => {
-			interval = setInterval(() => {
-				rotateY += 1;
-				rotateX += 1;
-				d6.style.transform = "rotateX(" + rotateY + "deg) rotateY(" + rotateX + "deg) "
-			}, 50)
+		const move = () => {
+			rotateY += 1;
+			rotateX += 1;
+			d6.style.transform = "rotateX(" + rotateY + "deg) rotateY(" + rotateX + "deg) "
 		}
 		
 		window.onmousedown = function () {
@@ -79,11 +75,11 @@
 
 		window.onmouseup = function () {
 			drag = 0
-			startMoving()
+			start()
 		}
 
 		window.onmousemove = function (e) {
-			if (drag) {
+			if (drag && d6) {
 				x = e.movementX
 				y = e.movementY
 				rotateX += x
@@ -92,7 +88,26 @@
 			}
 		}
 
-		startMoving()
+	</script>
+	<script>
+		const checkUrl = () => {
+			const url = window.location.href.split('/')[3]
+			if (url === '') {
+				if (banner.innerHTML === '') {
+					insertCube()
+				}
+				move()
+			}
+			else (
+				clearInterval(interval)
+			)
+		}
+
+		const start = () => {
+			interval = setInterval(checkUrl, 100);
+		}
+
+		window.onload = start()
 	</script>
   </body>
 </html>

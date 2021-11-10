@@ -21,8 +21,22 @@ export default function SignInModal({ modal, setModal }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
+  const throwError = (title) => {
+    Swal.fire({
+      icon: 'error',
+      confirmButtonColor: '#1382e9',
+      text: title,
+    });
+  };
+
   function submit(event) {
     event.preventDefault();
+    if (email.length < 5) {
+      throwError('Insira um e-mail válido');
+      return;
+    } if (password.length < 8) {
+      throwError('Senhas contém no mínimo 8 caractéres');
+    }
     setIsLoading(true);
     postSignIn(email, password)
       .then((res) => {

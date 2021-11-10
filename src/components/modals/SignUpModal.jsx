@@ -25,8 +25,41 @@ export default function SignUpModal({ modal, setModal }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
+  const throwError = (title) => {
+    Swal.fire({
+      icon: 'error',
+      confirmButtonColor: '#1382e9',
+      text: title,
+    });
+  };
+
   function submit(event) {
     event.preventDefault();
+    if (userInfo.username.length === 0) {
+      throwError('Insira seu nome');
+      return;
+    } if (userInfo.username.length < 3) {
+      throwError('Insira um nome válido');
+      return;
+    } if (userInfo.username.length < 3) {
+      throwError('Insira um nome válido');
+      return;
+    } if (userInfo.email.length < 5) {
+      throwError('Insira um e-mail válido');
+      return;
+    } if (userInfo.cpf.length < 11) {
+      throwError('Insira um cpf válido');
+      return;
+    } if (userInfo.phone.length !== 11) {
+      throwError('Insira um número válido');
+      return;
+    } if (userInfo.password.length < 8) {
+      throwError('A senha deve conter no mínimo 8 dígitos');
+      return;
+    } if (userInfo.password !== userInfo.passwordRepeat) {
+      throwError('As senhas não conferem');
+      return;
+    }
     setIsLoading(true);
     postSignUp(
       userInfo.username,
@@ -41,7 +74,7 @@ export default function SignUpModal({ modal, setModal }) {
           confirmButtonColor: '#1382e9',
           text: 'Conta criada!',
         });
-        close();
+        setModal('sign-in');
         setUserInfo({
           username: '',
           email: '',
@@ -57,8 +90,6 @@ export default function SignUpModal({ modal, setModal }) {
           icon: 'error',
           confirmButtonColor: '#1382e9',
           text: 'Usuário já existe',
-        }).then(() => {
-          close();
         });
         setIsLoading(false);
       });
@@ -127,6 +158,9 @@ export default function SignUpModal({ modal, setModal }) {
             >
               Cadastrar-se
             </ButtonForm>
+            <ModalLink onClick={() => setModal('sign-in')}>
+              Já possui uma conta? Cadastre-se
+            </ModalLink>
           </div>
         </form>
       </ContainerSignUp>
@@ -201,5 +235,9 @@ const CloseButton = styled.button`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
   border: 0px;
+  cursor: pointer;
+`;
+
+const ModalLink = styled.p`
   cursor: pointer;
 `;
