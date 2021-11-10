@@ -11,9 +11,13 @@ import { ReactComponent as ShowPassIcon } from '../assets/icons/show-pass.svg';
 import { ReactComponent as CloseIcon } from '../assets/icons/close.svg';
 import ButtonForm from './ButtonForm';
 import postSignIn from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPopUp({ text }) {
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
+
+  const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,9 +29,9 @@ export default function LoginPopUp({ text }) {
     setIsLoading(true);
     postSignIn(email, password)
       .then((res) => {
-        console.log(res.data);
+        setUser(res.data);
+        localStorage.setItem('user', JSON.stringify(res.data));
         setIsLoading(false);
-        navigate('/');
       })
       .catch(() => setIsLoading(false));
   }
@@ -43,7 +47,9 @@ export default function LoginPopUp({ text }) {
             <div>
               <Logo />
               <StoreName />
-              <h2>Entre na sua conta</h2>
+              <h2>
+                Entre na sua conta
+              </h2>
               <InputForm
                 required
                 placeholder="E-mail"
