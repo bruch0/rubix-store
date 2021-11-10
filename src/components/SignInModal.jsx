@@ -13,7 +13,7 @@ import ButtonForm from './ButtonForm';
 import postSignIn from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function LoginPopUp({ text }) {
+export default function SignInModal({ text }) {
   const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
