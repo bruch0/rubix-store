@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import cart from '../assets/icons/cart.png';
 import categoryIcon from '../assets/icons/category.png';
-import LoginPopUp from './SignInModal';
+import LoginPopUp from './modals/SignInModal';
 import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
 import { useAuth } from '../contexts/AuthContext';

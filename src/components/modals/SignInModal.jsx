@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
-import Logo from './Logo';
-import '../shared/styles/modal.css';
-import StoreName from './StoreName';
-import InputForm from './InputForm';
-import { ReactComponent as HidePassIcon } from '../assets/icons/hide-pass.svg';
-import { ReactComponent as ShowPassIcon } from '../assets/icons/show-pass.svg';
-import { ReactComponent as CloseIcon } from '../assets/icons/close.svg';
-import ButtonForm from './ButtonForm';
-import postSignIn from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import Logo from '../Logo';
+import '../../shared/styles/modal.css';
+import StoreName from '../StoreName';
+import InputForm from '../InputForm';
+import { ReactComponent as HidePassIcon } from '../../assets/icons/hide-pass.svg';
+import { ReactComponent as ShowPassIcon } from '../../assets/icons/show-pass.svg';
+import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
+import ButtonForm from '../ButtonForm';
+import postSignIn from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function SignInModal({ text }) {
   const { setUser } = useAuth();
