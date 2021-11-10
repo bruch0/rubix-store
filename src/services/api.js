@@ -16,11 +16,17 @@ function getConfig(token) {
   };
 }
 
-export default function postSignIn(email, password) {
-  return api.post('/auth/sign-in', {
-    email,
-    password,
-  });
-}
+const postSignIn = (email, password) => api.post('/auth/sign-in', {
+  email,
+  password,
+});
 
-export { api };
+const postSignUp = (name, email, password, cpf, phone) => api.post('/auth/sign-up', {
+  name,
+  email,
+  password,
+  cpf,
+  phone,
+});
+
+export { api, postSignIn, postSignUp };

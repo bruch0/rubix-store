@@ -14,6 +14,12 @@ function Products() {
   const { search } = useLocation();
   const category = new URLSearchParams(search).get('category');
 
+  const currencyFormat = {
+    minimumFractionDigits: 2,
+    style: 'currency',
+    currency: 'BRL',
+  };
+
   useEffect(() => {
     let query = category ? `?category=${category}` : '';
 
@@ -97,7 +103,7 @@ function Products() {
                   <>
                     <Name>{product.name}</Name>
                     <Value>
-                      {(product.value / 100).toString().replace('.', ',')}
+                      {(product.value / 100).toLocaleString('pt-BR', currencyFormat)}
                     </Value>
                     <AddToCart>
                       Adicionar ao carrinho
