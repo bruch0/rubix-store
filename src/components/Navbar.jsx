@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Kaftus from '../assets/fonts/Kaftus.ttf';
 import cart from '../assets/icons/cart.png';
 import categoryIcon from '../assets/icons/category.png';
 import LoginPopUp from './LoginPopUp';
+import StoreName from './StoreName';
 
 function Navbar() {
   const categories = [
@@ -23,8 +23,8 @@ function Navbar() {
     <Nav>
       <StoreOptions>
         <Store to="/">
-          <Logo src="Assets/Banner/6.svg" alt="logo" />
-          <StoreName>RUBIX STORE</StoreName>
+          <LogoNavBar src="Assets/Banner/6.svg" alt="logo" />
+          <StoreName />
         </Store>
         <Options>
           <Cart to="cart">
@@ -83,27 +83,11 @@ const Store = styled(Link)`
   }
 `;
 
-const Logo = styled.img`
+const LogoNavBar = styled.img`
   height: 80%;
 
   @media (max-width: 600px) {
     height: 60%;
-  }
-`;
-
-const StoreName = styled.p`
-  font-size: 30px;
-  margin-left: 15px;
-  font-family: 'Kaftus';
-
-  @font-face {
-    src: url(${Kaftus}) format('truetype');
-    font-family: Kaftus;
-  }
-
-  @media (max-width: 600px) {
-    margin-left: 5px;
-    font-size: 4vw;
   }
 `;
 

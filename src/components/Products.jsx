@@ -59,7 +59,7 @@ function Products() {
             }
           }}
         >
-          <img src={filterIcon} alt="Pesquisar" />
+          <img src={filterIcon} alt="Filtrar" />
           <span>Filtro</span>
         </FilterButton>
         <Dropdown>
