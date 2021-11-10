@@ -5,7 +5,6 @@ import Swal from 'sweetalert2';
 import Logo from '../Logo';
 import StoreName from '../StoreName';
 import InputForm from '../InputForm';
-import '../../shared/styles/modal.css';
 import { ReactComponent as HidePassIcon } from '../../assets/icons/hide-pass.svg';
 import { ReactComponent as ShowPassIcon } from '../../assets/icons/show-pass.svg';
 import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
@@ -13,7 +12,7 @@ import ButtonForm from '../ButtonForm';
 import postSignIn from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
-export default function SignInModal({ modal, setModal }) {
+export default function SignUpModal({ modal, setModal }) {
   const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -42,7 +41,7 @@ export default function SignInModal({ modal, setModal }) {
 
   return (
     <Popup
-      open={modal === 'sign-in'}
+      open={modal === 'sign-up'}
       modal
       closeOnDocumentClick={false}
     >
@@ -54,8 +53,9 @@ export default function SignInModal({ modal, setModal }) {
           <div>
             <Logo />
             <StoreName />
-            <h2>Entre na sua conta</h2>
+            <h2>Cadastre-se</h2>
             <InputForm
+              required
               placeholder="E-mail"
               type="email"
               value={email}
@@ -63,6 +63,7 @@ export default function SignInModal({ modal, setModal }) {
             />
             <InputPassContainer>
               <InputForm
+                required
                 placeholder="Senha"
                 type={showPass || 'password'}
                 value={password}
@@ -84,17 +85,13 @@ export default function SignInModal({ modal, setModal }) {
             >
               Entrar
             </ButtonForm>
-            <ModalLink onClick={() => setModal('sign-up')}>
-              Cadastre-se
-            </ModalLink>
+            <h3>Cadastre-se</h3>
           </div>
         </form>
       </ContainerLogin>
     </Popup>
   );
 }
-
-const ModalLink = styled.p``;
 
 const InputPassContainer = styled.div`
   position: relative;

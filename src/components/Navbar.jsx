@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import cart from '../assets/icons/cart.png';
 import categoryIcon from '../assets/icons/category.png';
-import LoginPopUp from './modals/SignInModal';
+import SignUpModal from './modals/SignUpModal';
+import SignInModal from './modals/SignInModal';
 import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,6 +12,8 @@ import { useAuth } from '../contexts/AuthContext';
 function Navbar() {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const [modal, setModal] = useState(null);
 
   const categories = [
     { icon: categoryIcon, name: '2x2x2' },
@@ -39,8 +42,12 @@ function Navbar() {
             <UserIcon onClick={() => navigate('/user')} />
           ) : (
             <Action>
-              <LoginPopUp text="Login" />
-              <LoginPopUp text="Cadastre-se" />
+              <ModalLink onClick={() => setModal('sign-in')}>
+                Entrar
+              </ModalLink>
+              <ModalLink onClick={() => setModal('sign-up')}>
+                Cadastre-se
+              </ModalLink>
             </Action>
           )}
         </Options>
@@ -53,9 +60,13 @@ function Navbar() {
           </Category>
         ))}
       </Categories>
+      <SignInModal modal={modal} setModal={setModal} />
+      <SignUpModal modal={modal} setModal={setModal} />
     </Nav>
   );
 }
+
+const ModalLink = styled.p``;
 
 const Nav = styled.nav`
   width: 100%;
