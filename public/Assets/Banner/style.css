@@ -1,0 +1,102 @@
+*{transition: 0.2s;}
+
+.banner {
+	height: 500px;
+	width: 100%;
+}
+
+#centro{
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 10;
+}
+
+.cena{
+	perspective: 600px;
+	background-color: transparent;
+}
+
+.cena div{
+	width: 100px;
+	height: 100px;
+}
+
+#cena{background-color: transparent;}
+
+.d6{
+	position: relative;
+	transform-style: preserve-3d;
+	background-color: transparent;
+}
+
+.d6 div{
+	width: 100;
+	height: 100;
+	background-color: rgba(0,0,0,0);
+}
+
+.face{
+	position: absolute;
+
+}
+
+.primeira{transform: translateZ(50px);}
+.segunda{transform: translateZ(-50px);}
+.terceira{transform: rotateY(90deg) translateZ(50px); ;}
+.quarta{transform: rotateY(90deg) translateZ(-50px); ;}
+.quinta{transform: rotateX(90deg) translateZ(50px); ;}
+.sexta{transform: rotateX(90deg) translateZ(-50px); ;}
+
+.cube-img{width: 100%; height: 100%;}
+
+.nao-selecionavel {
+	-webkit-touch-callout: none;  /* iPhone OS, Safari */
+	-webkit-user-select: none;    /* Chrome, Safari 3 */
+	-khtml-user-select: none;     /* Safari 2 */
+	-moz-user-select: none;       /* Firefox */
+	-ms-user-select: none;        /* IE10+ */
+	user-select: none;            /* Possível implementação no futuro */
+}
+
+.title {
+	position: absolute;
+	top: 45%;
+	left: 35%;
+	font-size: 2.7vw;
+	font-family: 'Saira Stencil One', sans-serif;
+	text-align: center;
+}
+
+@media (max-width: 1000px) {
+	.title {
+		font-size: 4vw;
+		top: 50%;
+		left: 28%;
+	}
+}
+
+
+@media (max-width: 600px) {
+	.title {
+		font-size: 6vw;
+		top: 32%;
+		left: 15%;
+	}
+
+	.cena div{
+		width: 50px;
+		height: 50px;
+	}
+
+	.primeira{transform: translateZ(25px);}
+	.segunda{transform: translateZ(-25px);}
+	.terceira{transform: rotateY(90deg) translateZ(25px); ;}
+	.quarta{transform: rotateY(90deg) translateZ(-25px); ;}
+	.quinta{transform: rotateX(90deg) translateZ(25px); ;}
+	.sexta{transform: rotateX(90deg) translateZ(-25px); ;}
+}
