@@ -1,6 +1,6 @@
 import React from 'react';
-import Products from './Products';
-import Banner from './Banner';
+import Products from '../../components/Products';
+import Banner from '../../components/Banner';
 
 function Home() {
   return (

@@ -1,11 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Kaftus from '../Assets/Fonts/Kaftus.ttf';
-import cart from '../Assets/Icons/cart.png';
-import categoryIcon from '../Assets/Icons/category.png';
+import cart from '../assets/icons/cart.png';
+import categoryIcon from '../assets/icons/category.png';
+import LoginPopUp from './modals/SignInModal';
+import StoreName from './StoreName';
+import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
+import { useAuth } from '../contexts/AuthContext';
 
 function Navbar() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const categories = [
     { icon: categoryIcon, name: '2x2x2' },
     { icon: categoryIcon, name: '3x3x2' },
@@ -22,15 +28,21 @@ function Navbar() {
     <Nav>
       <StoreOptions>
         <Store to="/">
-          <Logo src="Assets/Banner/6.svg" alt="logo" />
-          <StoreName>RUBIX STORE</StoreName>
+          <LogoNavBar src="Assets/Banner/6.svg" alt="logo" />
+          <StoreName />
         </Store>
         <Options>
           <Cart to="cart">
             <img src={cart} alt="cart" />
           </Cart>
-          <Action>Login</Action>
-          <Action>Cadastre-se</Action>
+          {user ? (
+            <UserIcon onClick={() => navigate('/user')} />
+          ) : (
+            <Action>
+              <LoginPopUp text="Login" />
+              <LoginPopUp text="Cadastre-se" />
+            </Action>
+          )}
         </Options>
       </StoreOptions>
       <Categories>
@@ -58,7 +70,7 @@ const Nav = styled.nav`
   justify-content: space-between;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   padding: 0px 2%;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 `;
 
 const StoreOptions = styled.div`
@@ -78,11 +90,11 @@ const Store = styled(Link)`
   color: black;
 
   :visited {
-      color: black
+    color: black;
   }
 `;
 
-const Logo = styled.img`
+const LogoNavBar = styled.img`
   height: 80%;
 
   @media (max-width: 600px) {
@@ -90,25 +102,14 @@ const Logo = styled.img`
   }
 `;
 
-const StoreName = styled.p`
-  font-size: 30px;
-  margin-left: 15px;
-  font-family: 'Kaftus';
-
-  @font-face {
-    src: url(${Kaftus}) format('truetype');
-    font-family: Kaftus;
-  }
-
-  @media (max-width: 600px) {
-    margin-left: 5px;
-    font-size: 4vw;
-  }
-`;
-
 const Options = styled.div`
   display: flex;
-  align-items: center;
+
+  svg {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
 
   > * {
     margin-left: 15px;
@@ -123,10 +124,15 @@ const Cart = styled(Link)`
   align-items: center;
 `;
 
-const Action = styled.p`
+const Action = styled.div`
+  display: flex;
   font-family: 'Quicksand', sans-serif;
   font-size: 20px;
   cursor: pointer;
+  margin-top: 5px;
+  p:first-child {
+    margin-right: 10px;
+  }
 
   @media (max-width: 600px) {
     font-size: 3vw;
@@ -139,16 +145,16 @@ const Categories = styled.div`
   padding: 5px 10%;
   display: flex;
   justify-content: space-between;
-  
+
   @media (max-width: 1000px) {
-      padding: 5px 5%;
-    }
+    padding: 5px 5%;
+  }
 
   @media (max-width: 600px) {
-      justify-content: unset;
-      padding: 5px 0%;
-      overflow-x: scroll;
-    }
+    justify-content: unset;
+    padding: 5px 0%;
+    overflow-x: scroll;
+  }
 `;
 
 const Category = styled(Link)`
@@ -161,10 +167,10 @@ const Category = styled(Link)`
   font-family: 'Quicksand', sans-serif;
   color: black;
 
-:visited {
-    color: black
-}
-  
+  :visited {
+    color: black;
+  }
+
   img {
     width: 30px;
   }

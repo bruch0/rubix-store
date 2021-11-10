@@ -1,19 +1,24 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './Pages/Home/Home';
-import GlobalStyles from './Shared/GlobalStyles';
-import Navbar from './Shared/Navbar';
+import Home from './pages/public/Home';
+import GlobalStyles from './shared/GlobalStyles';
+import Navbar from './components/Navbar';
+import { useAuth, AuthProvider } from './contexts/AuthContext';
 
 function App() {
+  const { setUser, user } = useAuth();
+
   return (
-    <BrowserRouter>
-      <GlobalStyles />
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <GlobalStyles />
+        <Navbar user={user} setUser={setUser} />
+        <Routes>
+          <Route path="/" element={<Home />} exact />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
