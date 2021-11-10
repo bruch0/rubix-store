@@ -22,4 +22,12 @@ export default styled.input`
   &::placeholder {
     color: black;
   }
+
+  &:invalid:not([value=""]) {
+    box-shadow: 0px 2px 4px rgba(216, 18, 18, 0.76);
+  }
+
+  &:valid {
+    box-shadow: 0px 2px 4px rgba(20, 143, 16, 0.808);
+  }
 `;

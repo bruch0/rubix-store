@@ -3,7 +3,6 @@ import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import Logo from '../Logo';
-import '../../shared/styles/modal.css';
 import StoreName from '../StoreName';
 import InputForm from '../InputForm';
 import { ReactComponent as HidePassIcon } from '../../assets/icons/hide-pass.svg';
@@ -12,6 +11,8 @@ import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
 import ButtonForm from '../ButtonForm';
 import postSignIn from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+
+const overlayStyle = { background: 'rgba(0,0,0,0.5)' };
 
 export default function SignInModal({ text }) {
   const { setUser } = useAuth();
@@ -34,14 +35,19 @@ export default function SignInModal({ text }) {
         Swal.fire({
           icon: 'error',
           confirmButtonColor: '#1382e9',
-          text: 'Usuário os senha inválidos',
+          text: 'Usuário ou senha inválidos',
         });
         setIsLoading(false);
       });
   }
 
   return (
-    <Popup trigger={<p>{text}</p>} modal>
+    <Popup
+      modal
+      closeOnDocumentClick={false}
+      trigger={<p>{text}</p>}
+      {...{ overlayStyle }}
+    >
       {(close) => (
         <ContainerLogin>
           <CloseButton onClick={() => close()}>
