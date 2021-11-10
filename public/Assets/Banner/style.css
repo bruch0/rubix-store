@@ -65,7 +65,7 @@
 
 .title {
 	position: absolute;
-	top: 45%;
+	top: 60%;
 	left: 35%;
 	font-size: 2.7vw;
 	font-family: 'Saira Stencil One', sans-serif;
@@ -75,7 +75,7 @@
 @media (max-width: 1000px) {
 	.title {
 		font-size: 4vw;
-		top: 50%;
+		top: 65%;
 		left: 28%;
 	}
 }
@@ -84,7 +84,7 @@
 @media (max-width: 600px) {
 	.title {
 		font-size: 6vw;
-		top: 32%;
+		top: 47%;
 		left: 15%;
 	}
 
