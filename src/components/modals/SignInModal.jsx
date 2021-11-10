@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import Logo from '../Logo';
 import StoreName from '../StoreName';
 import InputForm from '../InputForm';
+import '../../shared/styles/modal.css';
 import { ReactComponent as HidePassIcon } from '../../assets/icons/hide-pass.svg';
 import { ReactComponent as ShowPassIcon } from '../../assets/icons/show-pass.svg';
 import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
@@ -12,9 +13,7 @@ import ButtonForm from '../ButtonForm';
 import { postSignIn } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
-const overlayStyle = { background: 'rgba(0,0,0,0.5)' };
-
-export default function SignInModal({ text }) {
+export default function SignInModal({ modal, setModal }) {
   const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -42,60 +41,59 @@ export default function SignInModal({ text }) {
   }
 
   return (
-    <Popup
-      modal
-      closeOnDocumentClick={false}
-      trigger={<p>{text}</p>}
-      {...{ overlayStyle }}
-    >
-      {(close) => (
-        <ContainerLogin>
-          <CloseButton onClick={() => close()}>
-            <CloseIcon />
-          </CloseButton>
-          <form onSubmit={submit}>
-            <div>
-              <Logo />
-              <StoreName />
-              <h2>
-                Entre na sua conta
-              </h2>
+    <Popup open={modal === 'sign-in'} modal closeOnDocumentClick={false}>
+      <ContainerLogin>
+        <CloseButton onClick={() => setModal(null)}>
+          <CloseIcon />
+        </CloseButton>
+        <form onSubmit={submit}>
+          <div>
+            <Logo />
+            <StoreName />
+            <h2>Entre na sua conta</h2>
+            <InputForm
+              placeholder="E-mail"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <InputPassContainer>
               <InputForm
-                placeholder="E-mail"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Senha"
+                type={showPass || 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
-              <InputPassContainer>
-                <InputForm
-                  placeholder="Senha"
-                  type={showPass || 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                {!showPass ? (
-                  <HidePassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
-                ) : (
-                  <ShowPassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
-                )}
-              </InputPassContainer>
-              <h3>Esqueceu sua senha?</h3>
-            </div>
-            <div>
-              <ButtonForm
-                type="submit"
-                isLoading={isLoading}
-                disabled={isLoading}
-              >
-                Entrar
-              </ButtonForm>
-            </div>
-          </form>
-        </ContainerLogin>
-      )}
+              {!showPass ? (
+                <HidePassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
+              ) : (
+                <ShowPassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
+              )}
+            </InputPassContainer>
+            <h3>Esqueceu sua senha?</h3>
+          </div>
+          <div>
+            <ButtonForm
+              type="submit"
+              isLoading={isLoading}
+              disabled={isLoading}
+            >
+              Entrar
+            </ButtonForm>
+            <ModalLink onClick={() => setModal('sign-up')}>
+              Cadastre-se
+            </ModalLink>
+          </div>
+        </form>
+      </ContainerLogin>
     </Popup>
   );
 }
+
+const ModalLink = styled.p`
+  font-weight: 500;
+  cursor: pointer;
+`;
 
 const InputPassContainer = styled.div`
   position: relative;
