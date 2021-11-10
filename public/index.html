@@ -16,10 +16,83 @@
       href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Saira+Stencil+One&display=swap"
       rel="stylesheet"
     />
+	<link rel="stylesheet" href="Assets/Banner/style.css">
     <title>React App</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+
+	<script>
+		const cube = `
+		<div id="centro">
+			<div class="cena" id="cena">
+				<div class="d6" id="d6">
+					<div class="face nao-selecionavel primeira">
+						<img draggable="false" class="cube-img" src='Assets/Banner/1.svg'>
+					</div>
+					<div class="face nao-selecionavel segunda">
+						<img draggable="false" class="cube-img" src='Assets/Banner/2.svg'>
+					</div>
+					<div class="face nao-selecionavel terceira">
+						<img draggable="false" class="cube-img" src='Assets/Banner/3.svg'>
+					</div>
+					<div class="face nao-selecionavel quarta">
+						<img draggable="false" class="cube-img" src='Assets/Banner/4.svg'>
+					</div>
+					<div class="face nao-selecionavel quinta">
+						<img draggable="false" class="cube-img" src='Assets/Banner/5.svg'>
+					</div>
+					<div class="face nao-selecionavel sexta">
+						<img draggable="false" class="cube-img" src='Assets/Banner/6.svg'>
+					</div>
+				</div>
+			</div>
+			<p class="title nao-selecionavel">A maior loja de cubos da<br> América Latina</p>
+		</div>`
+			
+		const insertCube = () => {
+			const banner = document.querySelector('#banner');
+			banner.innerHTML = cube;
+		}
+		
+		setTimeout(insertCube, 150);
+		</script>
+	<script>
+		let drag = 0
+		let interval
+		let rotateX = 0
+		let rotateY = 0
+
+		const startMoving = () => {
+			interval = setInterval(() => {
+				rotateY += 1;
+				rotateX += 1;
+				d6.style.transform = "rotateX(" + rotateY + "deg) rotateY(" + rotateX + "deg) "
+			}, 50)
+		}
+		
+		window.onmousedown = function () {
+			drag = 1
+			clearInterval(interval)
+		}
+
+		window.onmouseup = function () {
+			drag = 0
+			startMoving()
+		}
+
+		window.onmousemove = function (e) {
+			if (drag) {
+				x = e.movementX
+				y = e.movementY
+				rotateX += x
+				rotateY += y * -1
+				d6.style.transform = "rotateX(" + rotateY + "deg) rotateY(" + rotateX + "deg) "
+			}
+		}
+
+		startMoving()
+	</script>
   </body>
 </html>
