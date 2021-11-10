@@ -10,7 +10,7 @@ const AuthContext = createContext({});
 
 const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
-  console.log(user);
+
   useEffect(() => {
     const userLocal = localStorage.getItem('user');
     if (!userLocal) return;
