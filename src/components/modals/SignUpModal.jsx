@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
@@ -5,37 +6,55 @@ import Swal from 'sweetalert2';
 import Logo from '../Logo';
 import StoreName from '../StoreName';
 import InputForm from '../InputForm';
+
 import { ReactComponent as HidePassIcon } from '../../assets/icons/hide-pass.svg';
 import { ReactComponent as ShowPassIcon } from '../../assets/icons/show-pass.svg';
 import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
 import ButtonForm from '../ButtonForm';
-import { postSignIn } from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
+import { postSignUp } from '../../services/api';
 
 const overlayStyle = { background: 'rgba(0,0,0,0.5)' };
 
-export default function SignInModal({ text }) {
-  const { setUser } = useAuth();
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function SignUpModal({ text }) {
+  const [userInfo, setUserInfo] = useState({
+    username: '',
+    email: '',
+    cpf: '',
+    phone: '',
+    password: '',
+    passwordRepeat: '',
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
   function submit(event) {
     event.preventDefault();
     setIsLoading(true);
-    postSignIn(email, password)
-      .then((res) => {
-        setUser(res.data);
-        localStorage.setItem('user', JSON.stringify(res.data));
+    postSignUp(userInfo.username, userInfo.email, userInfo.password, userInfo.cpf, userInfo.phone)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          confirmButtonColor: '#1382e9',
+          text: 'Conta criada!',
+        });
+        close();
+        setUserInfo({
+          username: '',
+          email: '',
+          cpf: '',
+          phone: '',
+          password: '',
+          passwordRepeat: '',
+        });
         setIsLoading(false);
       })
       .catch(() => {
         Swal.fire({
           icon: 'error',
           confirmButtonColor: '#1382e9',
-          text: 'Usuário ou senha inválidos',
+          text: 'Usuário já existe',
+        }).then(() => {
+          close();
         });
         setIsLoading(false);
       });
@@ -49,7 +68,7 @@ export default function SignInModal({ text }) {
       {...{ overlayStyle }}
     >
       {(close) => (
-        <ContainerLogin>
+        <ContainerSignUp>
           <CloseButton onClick={() => close()}>
             <CloseIcon />
           </CloseButton>
@@ -61,17 +80,35 @@ export default function SignInModal({ text }) {
                 Entre na sua conta
               </h2>
               <InputForm
+                placeholder="Nome"
+                type="text"
+                value={userInfo.username}
+                onChange={(e) => setUserInfo({ ...userInfo, username: e.target.value })}
+              />
+              <InputForm
                 placeholder="E-mail"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={userInfo.email}
+                onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+              />
+              <InputForm
+                placeholder="CPF"
+                type="number"
+                value={userInfo.cpf}
+                onChange={(e) => setUserInfo({ ...userInfo, cpf: e.target.value })}
+              />
+              <InputForm
+                placeholder="Telefone"
+                type="number"
+                value={userInfo.phone}
+                onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
               />
               <InputPassContainer>
                 <InputForm
                   placeholder="Senha"
                   type={showPass || 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={userInfo.password}
+                  onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
                 />
                 {!showPass ? (
                   <HidePassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
@@ -79,7 +116,12 @@ export default function SignInModal({ text }) {
                   <ShowPassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
                 )}
               </InputPassContainer>
-              <h3>Esqueceu sua senha?</h3>
+              <InputForm
+                placeholder="Repita a senha"
+                type="password"
+                value={userInfo.passwordRepeat}
+                onChange={(e) => setUserInfo({ ...userInfo, passwordRepeat: e.target.value })}
+              />
             </div>
             <div>
               <ButtonForm
@@ -87,11 +129,11 @@ export default function SignInModal({ text }) {
                 isLoading={isLoading}
                 disabled={isLoading}
               >
-                Entrar
+                Cadastrar-se
               </ButtonForm>
             </div>
           </form>
-        </ContainerLogin>
+        </ContainerSignUp>
       )}
     </Popup>
   );
@@ -109,11 +151,11 @@ const InputPassContainer = styled.div`
   }
 `;
 
-const ContainerLogin = styled.div`
+const ContainerSignUp = styled.div`
   position: relative;
   background-color: #ffffff;
   width: 600px;
-  height: 500px;
+  height: 600px;
   padding: 20px;
   border-radius: 37px;
   color: #000;

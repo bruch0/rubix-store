@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import cart from '../assets/icons/cart.png';
 import categoryIcon from '../assets/icons/category.png';
 import LoginPopUp from './modals/SignInModal';
+import SignUpPopUp from './modals/SignUpModal';
 import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -40,7 +41,7 @@ function Navbar() {
           ) : (
             <Action>
               <LoginPopUp text="Login" />
-              <LoginPopUp text="Cadastre-se" />
+              <SignUpPopUp text="Cadastre-se" />
             </Action>
           )}
         </Options>
@@ -63,7 +64,7 @@ const Nav = styled.nav`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
