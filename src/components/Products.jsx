@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Swal from 'sweetalert2';
 import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
-import { api } from '../services/api';
+import { api, postCart } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
-function Products() {
+function Products({ setModal }) {
   const [products, setProducts] = useState([]);
   const [filterDropdown, setFilterDropdown] = useState(false);
   const [order, setOrder] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const { search } = useLocation();
   const category = new URLSearchParams(search).get('category');
+
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const currencyFormat = {
     minimumFractionDigits: 2,
@@ -35,12 +40,25 @@ function Products() {
       query = `?search=${productSearch}`;
     }
 
-    api.get(`/products${category || query ? query : ''}`)
+    api
+      .get(`/products${category || query ? query : ''}`)
       .then((response) => setProducts(response.data));
   }, [category, order, productSearch]);
 
   const handleClickOutside = () => {
     setTimeout(() => setFilterDropdown(false), 110);
+  };
+
+  const handleAddCart = (e, productId) => {
+    e.stopPropagation();
+    if (user) {
+      postCart(productId, 1, user.token)
+        .then(() => Swal.fire({
+          icon: 'success',
+          confirmButtonColor: '#1382e9',
+          text: 'Adicionado!',
+        }));
+    } else setModal('sign-in');
   };
 
   return (
@@ -70,18 +88,20 @@ function Products() {
         </FilterButton>
         <Dropdown>
           <DropdownContent enabled={filterDropdown ? 1 : 0}>
-            <DropwdownOption onClick={() => {
-              setOrder('price');
-              setFilterDropdown(false);
-            }}
+            <DropwdownOption
+              onClick={() => {
+                setOrder('price');
+                setFilterDropdown(false);
+              }}
             >
               Maior preço
             </DropwdownOption>
 
-            <DropwdownOption onClick={() => {
-              setOrder('-price');
-              setFilterDropdown(false);
-            }}
+            <DropwdownOption
+              onClick={() => {
+                setOrder('-price');
+                setFilterDropdown(false);
+              }}
             >
               Menor preço
             </DropwdownOption>
@@ -92,20 +112,24 @@ function Products() {
       <ProductsDisplay>
         {products.length > 0
           ? products.map((product) => (
-            <Product to={`/product/${product.id}`} key={product.id}>
-              <ProductImg src={searchIcon} />
+            <Product key={product.id}>
+              <ProductImg
+                onClick={() => navigate(`/products/${product.id}`)}
+                src={searchIcon}
+              />
               <ProductInfo>
                 {product.total_qty === 0 ? (
-                  <SoldOff>
-                    Esgotado
-                  </SoldOff>
+                  <SoldOff>Esgotado</SoldOff>
                 ) : (
                   <>
                     <Name>{product.name}</Name>
                     <Value>
-                      {(product.value / 100).toLocaleString('pt-BR', currencyFormat)}
+                      {(product.value / 100).toLocaleString(
+                        'pt-BR',
+                        currencyFormat,
+                      )}
                     </Value>
-                    <AddToCart>
+                    <AddToCart onClick={(e) => handleAddCart(e, product.id)}>
                       Adicionar ao carrinho
                     </AddToCart>
                   </>
@@ -195,66 +219,66 @@ const FilterButton = styled.button`
   cursor: pointer;
 
   span {
-      font-family: 'Quicksand', sans-serif;
+    font-family: 'Quicksand', sans-serif;
   }
 
   @media (max-width: 1000px) {
     width: 15%;
 
     span {
-        display: none;
+      display: none;
     }
   }
 `;
 
 const Dropdown = styled.div`
-    display: inline-block;
-    position: absolute;
-    right: 0;
+  display: inline-block;
+  position: absolute;
+  right: 0;
 `;
 
 const DropdownContent = styled.div`
-    width: 7.5vw;
-    height: 60px;
-    background-color: #EBEBEB;
-    border-radius: 22px;
-     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-    display: ${(props) => (props.enabled ? 'flex' : 'none')};
-    flex-direction: column;
-    justify-content: space-around;
-    position: absolute;
-    right: 5vw;
-    top: 100%;
-    z-index: 1;
+  width: 7.5vw;
+  height: 60px;
+  background-color: #ebebeb;
+  border-radius: 22px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  display: ${(props) => (props.enabled ? 'flex' : 'none')};
+  flex-direction: column;
+  justify-content: space-around;
+  position: absolute;
+  right: 5vw;
+  top: 100%;
+  z-index: 1;
 
-    && p {
-        display: block;
-    }
+  && p {
+    display: block;
+  }
 
-    @media (max-width: 1000px) {
-        width: 12vw;
-    }
+  @media (max-width: 1000px) {
+    width: 12vw;
+  }
 
-    @media (max-width: 600px) {
-        width: 28vw;
-    }
+  @media (max-width: 600px) {
+    width: 28vw;
+  }
 `;
 
 const DropwdownOption = styled.p`
-    height: 30%;
-    font-size: 1vw;
-    font-weight: bold;
-    text-align: center;
-    color: black;
-    cursor: pointer;
+  height: 30%;
+  font-size: 1vw;
+  font-weight: bold;
+  text-align: center;
+  color: black;
+  cursor: pointer;
 
-    @media (max-width: 1000px) {
-        font-size: 1.5vw;
-    }
+  @media (max-width: 1000px) {
+    font-size: 1.5vw;
+  }
 
-    @media (max-width: 600px) {
-        font-size: 3vw;
-    }
+  @media (max-width: 600px) {
+    font-size: 3vw;
+  }
 `;
 
 const ProductsDisplay = styled.div`
@@ -280,7 +304,7 @@ const ProductsDisplay = styled.div`
   }
 `;
 
-const Product = styled(Link)`
+const Product = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -288,18 +312,18 @@ const Product = styled(Link)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
 
-
   :hover {
-      button {
-          width: 100%;
-          height: 35px;
-          color: white;
-          margin-left: 0px;
-      }
+    button {
+      width: 100%;
+      height: 35px;
+      color: white;
+      margin-left: 0px;
     }
+  }
 `;
 
 const ProductImg = styled.img`
+  cursor: pointer;
   width: 100%;
 `;
 
@@ -314,17 +338,17 @@ const ProductInfo = styled.div`
 `;
 
 const SoldOff = styled.div`
-    width: 90%;
-    height: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #F66565;
-    color: white;
-    margin: 0px 0px 0px 5%;
-    border-radius: 22px;
-    font-size: 25px;
-    font-weight: 500;
+  width: 90%;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f66565;
+  color: white;
+  margin: 0px 0px 0px 5%;
+  border-radius: 22px;
+  font-size: 25px;
+  font-weight: 500;
 `;
 
 const Name = styled.p`
@@ -342,34 +366,34 @@ const Value = styled.p`
 `;
 
 const AddToCart = styled.button`
-    width: 90%;
-    margin: 0px;
-    margin-left: 5%;
-    height: 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #43FF4A;
-    border-radius: 22px;
-    color: transparent;
-    font-size: 1.5vw;
-    font-weight: 600;
-    transition: all .2s;
-    border: 0px;
-    padding: 0px;
-    cursor: pointer;
+  width: 90%;
+  margin: 0px;
+  margin-left: 5%;
+  height: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #43ff4a;
+  border-radius: 22px;
+  color: transparent;
+  font-size: 1.5vw;
+  font-weight: 600;
+  transition: all 0.2s;
+  border: 0px;
+  padding: 0px;
+  cursor: pointer;
 
-    @media (max-width: 1000px) {
-        font-size: 2.2vw;
-    }
+  @media (max-width: 1000px) {
+    font-size: 2.2vw;
+  }
 
-    @media (max-width: 600px) {
-        font-size: 3.5vw;
-    }
+  @media (max-width: 600px) {
+    font-size: 3.5vw;
+  }
 
-    @media (max-width: 400px) {
-        font-size: 7vw;
-    }
+  @media (max-width: 400px) {
+    font-size: 7vw;
+  }
 `;
 
 export default Products;

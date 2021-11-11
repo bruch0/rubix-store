@@ -29,4 +29,14 @@ const postSignUp = (name, email, password, cpf, phone) => api.post('/auth/sign-u
   phone,
 });
 
-export { api, postSignIn, postSignUp };
+const postCart = (productId, productQty, token) => api.post('/cart', {
+  product_id: productId,
+  product_qty: productQty,
+}, getConfig(token));
+
+export {
+  api,
+  postSignIn,
+  postSignUp,
+  postCart,
+};

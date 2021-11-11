@@ -2,11 +2,11 @@ import React from 'react';
 import Products from '../../components/Products';
 import Banner from '../../components/Banner';
 
-function Home() {
+function Home({ setModal }) {
   return (
     <>
       <Banner />
-      <Products />
+      <Products setModal={setModal} />
     </>
   );
 }
