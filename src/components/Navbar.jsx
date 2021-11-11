@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import cart from '../assets/icons/cart.png';
@@ -9,11 +9,9 @@ import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
 import { useAuth } from '../contexts/AuthContext';
 
-function Navbar() {
+function Navbar({ modal, setModal }) {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  const [modal, setModal] = useState(null);
 
   const categories = [
     { icon: categoryIcon, name: '2x2x2' },

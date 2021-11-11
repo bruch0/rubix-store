@@ -138,9 +138,9 @@ export default function SignUpModal({ modal, setModal }) {
                 onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
               />
               {!showPass ? (
-                <HidePassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
+                <HidePassIcon onClick={() => setShowPass(!showPass)} />
               ) : (
-                <ShowPassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
+                <ShowPassIcon onClick={() => setShowPass(!showPass)} />
               )}
             </InputPassContainer>
             <InputForm

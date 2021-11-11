@@ -43,6 +43,7 @@ export default function SignInModal({ modal, setModal }) {
         setUser(res.data);
         localStorage.setItem('user', JSON.stringify(res.data));
         setIsLoading(false);
+        setModal(null);
       })
       .catch(() => {
         Swal.fire({
@@ -79,9 +80,9 @@ export default function SignInModal({ modal, setModal }) {
                 onChange={(e) => setPassword(e.target.value)}
               />
               {!showPass ? (
-                <HidePassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
+                <HidePassIcon onClick={() => setShowPass(!showPass)} />
               ) : (
-                <ShowPassIcon onClick={() => setShowPass(showPass ? 1 : 0)} />
+                <ShowPassIcon onClick={() => setShowPass(!showPass)} />
               )}
             </InputPassContainer>
             <h3>Esqueceu sua senha?</h3>
