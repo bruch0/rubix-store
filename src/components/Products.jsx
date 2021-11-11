@@ -115,7 +115,7 @@ function Products({ setModal }) {
             <Product key={product.id}>
               <ProductImg
                 onClick={() => navigate(`/products/${product.id}`)}
-                src={searchIcon}
+                src={product.imageUrl}
               />
               <ProductInfo>
                 {product.total_qty === 0 ? (
