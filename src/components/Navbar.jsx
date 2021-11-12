@@ -135,6 +135,8 @@ const Options = styled.div`
 `;
 
 const Cart = styled.img`
+  height: 25px;
+  height: 25px;
   margin: 0px;
   padding: 0px;
   display: flex;

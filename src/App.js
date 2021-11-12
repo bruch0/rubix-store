@@ -9,7 +9,6 @@ import Product from './pages/public/Product';
 
 function App() {
   const { setUser, user } = useAuth();
-
   const [modal, setModal] = useState(null);
 
   return (
