@@ -5,6 +5,7 @@ import Home from './pages/public/Home';
 import GlobalStyles from './shared/GlobalStyles';
 import Navbar from './components/Navbar';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
+import RecoverPassword from './pages/public/RecoverPassword';
 
 function App() {
   const { setUser, user } = useAuth();
@@ -20,6 +21,11 @@ function App() {
           <Route
             path="/"
             element={<Home setModal={setModal} />}
+            exact
+          />
+          <Route
+            path="/recover"
+            element={<RecoverPassword />}
             exact
           />
         </Routes>

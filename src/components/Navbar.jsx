@@ -5,6 +5,7 @@ import cart from '../assets/icons/cart.png';
 import categoryIcon from '../assets/icons/category.png';
 import SignUpModal from './modals/SignUpModal';
 import SignInModal from './modals/SignInModal';
+import PasswordRecoverModal from './modals/PasswordRecover';
 import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
 import { useAuth } from '../contexts/AuthContext';
@@ -60,6 +61,7 @@ function Navbar({ modal, setModal }) {
       </Categories>
       <SignInModal modal={modal} setModal={setModal} />
       <SignUpModal modal={modal} setModal={setModal} />
+      <PasswordRecoverModal modal={modal} setModal={setModal} />
     </Nav>
   );
 }
