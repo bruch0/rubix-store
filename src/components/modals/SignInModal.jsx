@@ -85,7 +85,7 @@ export default function SignInModal({ modal, setModal }) {
                 <ShowPassIcon onClick={() => setShowPass(!showPass)} />
               )}
             </InputPassContainer>
-            <h3>Esqueceu sua senha?</h3>
+            <ModalLink onClick={() => setModal('password')}>Esqueceu sua senha?</ModalLink>
           </div>
           <div>
             <ButtonForm
