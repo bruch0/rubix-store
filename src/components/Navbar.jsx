@@ -33,9 +33,14 @@ function Navbar({ modal, setModal }) {
           <StoreName />
         </Store>
         <Options>
-          <Cart to="cart">
-            <img src={cart} alt="cart" />
-          </Cart>
+          <Cart
+            src={cart}
+            alt="cart"
+            onClick={() => {
+              if (!user) setModal('sign-in');
+              else navigate('/cart');
+            }}
+          />
           {user ? (
             <UserIcon onClick={() => navigate('/user')} />
           ) : (
@@ -129,12 +134,13 @@ const Options = styled.div`
   }
 `;
 
-const Cart = styled(Link)`
+const Cart = styled.img`
   margin: 0px;
   padding: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Action = styled.div`
