@@ -5,6 +5,7 @@ import Home from './pages/public/Home';
 import GlobalStyles from './shared/GlobalStyles';
 import Navbar from './components/Navbar';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
+import Product from './pages/public/Product';
 
 function App() {
   const { setUser, user } = useAuth();
@@ -20,6 +21,11 @@ function App() {
           <Route
             path="/"
             element={<Home setModal={setModal} />}
+            exact
+          />
+          <Route
+            path="/product/:id"
+            element={<Product />}
             exact
           />
         </Routes>

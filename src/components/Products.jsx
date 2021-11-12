@@ -16,7 +16,7 @@ function Products({ setModal }) {
   const { search } = useLocation();
   const category = new URLSearchParams(search).get('category');
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const currencyFormat = {
@@ -57,7 +57,7 @@ function Products({ setModal }) {
           icon: 'success',
           confirmButtonColor: '#1382e9',
           text: 'Adicionado!',
-        }));
+        })).catch(() => logout());
     } else setModal('sign-in');
   };
 
@@ -114,7 +114,7 @@ function Products({ setModal }) {
           ? products.map((product) => (
             <Product key={product.id}>
               <ProductImg
-                onClick={() => navigate(`/products/${product.id}`)}
+                onClick={() => navigate(`/product/${product.id}`)}
                 src={product.imageUrl}
               />
               <ProductInfo>
