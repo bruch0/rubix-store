@@ -7,6 +7,7 @@ import SignUpModal from './modals/SignUpModal';
 import SignInModal from './modals/SignInModal';
 import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
+import { ReactComponent as LogoIcon } from '../assets/icons/logo.svg';
 import { useAuth } from '../contexts/AuthContext';
 
 function Navbar({ modal, setModal }) {
@@ -29,7 +30,7 @@ function Navbar({ modal, setModal }) {
     <Nav>
       <StoreOptions>
         <Store to="/">
-          <LogoNavBar src="Assets/Banner/6.svg" alt="logo" />
+          <LogoNavBar alt="Rubix Store Logo" />
           <StoreName />
         </Store>
         <Options>
@@ -112,9 +113,8 @@ const Store = styled(Link)`
   }
 `;
 
-const LogoNavBar = styled.img`
-  height: 80%;
-
+const LogoNavBar = styled(LogoIcon)`
+  width: 40px;
   @media (max-width: 600px) {
     height: 60%;
   }
