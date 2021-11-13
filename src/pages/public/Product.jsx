@@ -3,17 +3,15 @@ import styled from 'styled-components';
 import { calcularPrecoPrazo } from 'correios-brasil';
 import { Link, useParams } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
-import Select from 'react-select';
 import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
 import Button from '../../components/Button';
 import { getProduct, postCart } from '../../services/api';
-import { convertToBRL, throwSuccess } from '../../services/utils';
+import { convertToBRL, throwError, throwSuccess } from '../../services/utils';
 import { useAuth } from '../../contexts/AuthContext';
 import ModalContext from '../../contexts/ModalContext';
 
 export default function Product() {
-  // eslint-disable-next-line no-unused-vars
   const [product, setProduct] = useState([]);
   const [indexImage, setIndexImage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,25 +36,10 @@ export default function Product() {
     nVlDiametro: '0',
   };
 
-  const images = [
-    {
-      url: 'https://www.ziicube.com/image/cube/Gan/12-Maglev/GAN-12-01.jpg',
-    },
-    {
-      url: 'https://www.ziicube.com/image/cube/Gan/12-Maglev/GAN-12-02.jpg',
-    },
-    {
-      url: 'https://www.ziicube.com/image/cube/Gan/12-Maglev/GAN-12-03.jpg',
-    },
-    {
-      url: 'https://www.ziicube.com/image/cube/Gan/12-Maglev/GAN-12-04.jpg',
-    },
-  ];
-
   function controlPicture(n) {
     if (indexImage === 0 && n === -1) {
-      setIndexImage(images.length - 1);
-    } else if (indexImage === images.length - 1 && n === 1) {
+      setIndexImage(product.images.length - 1);
+    } else if (indexImage === product.images.length - 1 && n === 1) {
       setIndexImage(0);
     } else {
       setIndexImage(indexImage + n);
@@ -65,8 +48,8 @@ export default function Product() {
 
   function handleCalculateShipping() {
     setIsLoading(true);
-    console.log(cep);
     senderInfo.sCepDestino = cep;
+    console.log(senderInfo);
     calcularPrecoPrazo(senderInfo)
       .then((res) => {
         console.log(res);
@@ -74,29 +57,22 @@ export default function Product() {
       })
       .catch((err) => {
         console.log(err);
-        setIsLoading(false);
+        throwError(err);
       });
   }
 
   const handleAddCart = (e) => {
     e.stopPropagation();
-    console.log(quantity);
     if (user) {
       postCart(productId, quantity, user.token)
-        .then(() => throwSuccess('Adicionado!'))
-        .catch(() => logout());
+        .then(() => throwSuccess('Adicionado!')).catch(() => logout());
     } else setModal('sign-in');
   };
 
   useEffect(() => {
     getProduct(productId)
-      .then((res) => {
-        console.log(res.data);
-        setProduct(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      .then((res) => setProduct(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
   if (product.length === 0) {
@@ -109,17 +85,17 @@ export default function Product() {
         <ContainerTopLinks>
           <TopLink to="/">Home</TopLink>
           <ArrowLinks />
-          <TopLink to="/">3x3x3</TopLink>
+          <TopLink to={`/?category=${product.categoryName}`}>
+            {product.categoryName}
+          </TopLink>
         </ContainerTopLinks>
-        <TitleProduct>{product.name}</TitleProduct>
+        <TitleProduct>
+          {product.name}
+        </TitleProduct>
         <ContainerProduct>
           <ContainerPictureShow>
-            <PictureNumberText>
-              {indexImage + 1}
-              /
-              {images.length}
-            </PictureNumberText>
-            <Picture src={images[indexImage].url} alt="Imagem" />
+            <PictureNumberText>{`${indexImage + 1}/${product.images.length}`}</PictureNumberText>
+            <Picture src={product.images[indexImage].url} alt="Imagem" />
             <ArrowPassPrev onClick={() => controlPicture(-1)}>
               &#10094;
             </ArrowPassPrev>
@@ -131,11 +107,11 @@ export default function Product() {
             <Price>{convertToBRL(product.value)}</Price>
             <HorizontalLine />
             <QuantityContainer>
-              <Select
-                options={
-                  [...Array(product.total_qty).keys()].map((i) => ({ value: i + 1, label: i + 1 }))
-                }
-              />
+              <SelectQuantity onChange={(e) => setQuantity(e.target.value)}>
+                {[...Array(product.total_qty).keys()].map((n) => (
+                  <option key={n}>{n + 1}</option>
+                ))}
+              </SelectQuantity>
               <AvailableQuantity>
                 {product.total_qty}
                 {' '}
@@ -148,37 +124,24 @@ export default function Product() {
                   <p>
                     Calcular
                     {' '}
-                    <span> frete e prazo </span>
+                    <span>frete e prazo</span>
                   </p>
                   <FieldShippingContainer>
                     <InputShippingCost
                       maxLength={9}
                       value={cep}
-                      onChange={(e) => setCep(
-                        e.target.value
-                          .replace(/\D/g, '')
-                          .replace(/^(\d{5})(\d{3})+?$/, '$1-$2'),
-                      )}
+                      onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
                     />
                     <ButtonShippingCost
                       onClick={() => handleCalculateShipping()}
                     >
-                      {isLoading ? (
-                        <Loader
-                          type="TailSpin"
-                          color="#000"
-                          height={25}
-                          width={30}
-                        />
-                      ) : (
-                        <ShippingIcon />
-                      )}
+                      {isLoading
+                        ? <Loader type="TailSpin" color="#000" height={25} width={30} />
+                        : <ShippingIcon />}
                     </ButtonShippingCost>
                   </FieldShippingContainer>
                 </ShippingCostContainer>
-                <ButtonAddCart onClick={handleAddCart}>
-                  Adicione ao carrinho
-                </ButtonAddCart>
+                <ButtonAddCart onClick={handleAddCart}>Adicione ao carrinho</ButtonAddCart>
                 <ButtonBuyNow>Comprar agora</ButtonBuyNow>
               </>
             ) : (
@@ -194,15 +157,13 @@ export default function Product() {
         <TitleSection>Especificações</TitleSection>
         <DescriptionProduct>
           <p>{`Cor: ${product.color}`}</p>
-          <p>{`Marca: ${product.brand_id}`}</p>
+          <p>{`Marca: ${product.brandName}`}</p>
           <p>{`Modelo: ${product.model}`}</p>
           <p>{`Tamanho: ${product.size}`}</p>
         </DescriptionProduct>
         <TitleSection>Acompanha</TitleSection>
         <DescriptionProduct>
-          {product.contains.map((item) => (
-            <p key={item.item}>{item.item}</p>
-          ))}
+          {product.contains.map((item) => <p key={item.item}>{item.item}</p>)}
         </DescriptionProduct>
       </ContainerCenter>
     </Main>
@@ -291,7 +252,7 @@ const AvailableQuantity = styled.p`
   color: #737070;
 `;
 
-const SelectQuantity = styled(Select)`
+const SelectQuantity = styled.select`
   font-family: 'Quicksand', sans-serif;
   width: 150px;
   height: 40px;
