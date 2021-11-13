@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { calcularPrecoPrazo } from 'correios-brasil';
 import { Link, useParams } from 'react-router-dom';
@@ -9,15 +9,22 @@ import Loader from 'react-loader-spinner';
 import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
 import Button from '../../components/Button';
-import { getProduct } from '../../services/api';
-import { convertToBRL } from '../../services/utils';
+import { getProduct, postCart } from '../../services/api';
+import { convertToBRL, throwSuccess } from '../../services/utils';
+import { useAuth } from '../../contexts/AuthContext';
+import ModalContext from '../../contexts/ModalContext';
 
 export default function Product() {
   // eslint-disable-next-line no-unused-vars
   const [product, setProduct] = useState([]);
   const [indexImage, setIndexImage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const [cep, setCep] = useState('');
+
+  const { user, logout } = useAuth();
+
+  const { setModal } = useContext(ModalContext);
 
   const { id: productId } = useParams();
 
@@ -73,6 +80,15 @@ export default function Product() {
       });
   }
 
+  const handleAddCart = (e) => {
+    e.stopPropagation();
+    console.log(quantity);
+    if (user) {
+      postCart(productId, quantity, user.token)
+        .then(() => throwSuccess('Adicionado!')).catch(() => logout());
+    } else setModal('sign-in');
+  };
+
   useEffect(() => {
     getProduct(productId)
       .then((res) => {
@@ -116,9 +132,15 @@ export default function Product() {
             <Price>{convertToBRL(product.value)}</Price>
             <HorizontalLine />
             <QuantityContainer>
-              <SelectQuantity name="product_quantity">
-                {[...Array(product.total_qty).keys()].map((e) => (
-                  <option key={e}>{e + 1}</option>
+              <SelectQuantity>
+                {[...Array(product.total_qty).keys()].map((n) => (
+                  <option
+                    key={n}
+                    value={n + 1}
+                    onChange={(e) => setQuantity(e.target.value)}
+                  >
+                    {n + 1}
+                  </option>
                 ))}
               </SelectQuantity>
               <AvailableQuantity>
@@ -152,7 +174,7 @@ export default function Product() {
                     </ButtonShippingCost>
                   </FieldShippingContainer>
                 </ShippingCostContainer>
-                <ButtonAddCart>Adicione ao carrinho</ButtonAddCart>
+                <ButtonAddCart onClick={handleAddCart}>Adicione ao carrinho</ButtonAddCart>
                 <ButtonBuyNow>Comprar agora</ButtonBuyNow>
               </>
             ) : (

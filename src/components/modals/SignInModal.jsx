@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
@@ -13,14 +13,17 @@ import ButtonForm from '../ButtonForm';
 import { postSignIn } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { throwError } from '../../services/utils';
+import ModalContext from '../../contexts/ModalContext';
 
-export default function SignInModal({ modal, setModal }) {
+export default function SignInModal() {
   const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  const { modal, setModal } = useContext(ModalContext);
 
   function submit(event) {
     event.preventDefault();

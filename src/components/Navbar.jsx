@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import cart from '../assets/icons/cart.png';
@@ -9,10 +9,12 @@ import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
 import { ReactComponent as LogoIcon } from '../assets/icons/logo.svg';
 import { useAuth } from '../contexts/AuthContext';
+import ModalContext from '../contexts/ModalContext';
 
-function Navbar({ modal, setModal }) {
+function Navbar() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { modal, setModal } = useContext(ModalContext);
 
   const categories = [
     { icon: categoryIcon, name: '2x2x2' },

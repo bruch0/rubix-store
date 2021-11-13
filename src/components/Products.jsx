@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
@@ -6,19 +6,21 @@ import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
 import { api, postCart } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
 import { convertToBRL } from '../services/utils';
+import { useAuth } from '../contexts/AuthContext';
+import ModalContext from '../contexts/ModalContext';
 
-function Products({ setModal }) {
+function Products() {
   const [products, setProducts] = useState([]);
   const [filterDropdown, setFilterDropdown] = useState(false);
   const [order, setOrder] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const { search } = useLocation();
-  const category = new URLSearchParams(search).get('category');
 
-  const { user, logout } = useAuth();
+  const category = new URLSearchParams(search).get('category');
   const navigate = useNavigate();
+  const { setModal } = useContext(ModalContext);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     let query = category ? `?category=${category}` : '';
