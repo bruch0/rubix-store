@@ -2,14 +2,30 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { calcularPrecoPrazo } from 'correios-brasil';
 import { Link } from 'react-router-dom';
 import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
+import Button from '../../components/Button';
 
 export default function Product() {
   useEffect(() => {}, []);
   const [indexImage, setIndexImage] = useState(0);
   const [cep, setCep] = useState('');
+
+  const senderInfo = {
+    sCepOrigem: '20550110',
+    sCepDestino: null,
+    nVlPeso: '0.2',
+    nCdFormato: '1',
+    nVlComprimento: '17',
+    nVlAltura: '8',
+    nVlLargura: '11',
+    nCdServico: ['04014', '04510'],
+    nVlDiametro: '0',
+  };
+
+  const productTotalQty = 0;
 
   const images = [
     {
@@ -26,7 +42,6 @@ export default function Product() {
     },
   ];
 
-  // eslint-disable-next-line no-unused-vars
   function controlPicture(n) {
     if (indexImage === 0 && n === -1) {
       setIndexImage(images.length - 1);
@@ -35,6 +50,13 @@ export default function Product() {
     } else {
       setIndexImage(indexImage + n);
     }
+  }
+
+  function handleCalculateShipping() {
+    senderInfo.sCepDestino = cep;
+    calcularPrecoPrazo(senderInfo)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   }
 
   return (
@@ -67,32 +89,110 @@ export default function Product() {
             <QuantityContainer>
               <SelectQuantity name="product_quantity">
                 {[...Array(10).keys()].map((e) => (
-                  <option>{e + 1}</option>
+                  <option key={e}>{e + 1}</option>
                 ))}
               </SelectQuantity>
               <AvailableQuantity>27 disponíveis</AvailableQuantity>
             </QuantityContainer>
-            <ShippingCostContainer>
-              <p>
-                Calcular <span>frete e prazo</span>
-              </p>
-              <FieldShippingContainer>
-                <InputShippingCost
-                  maxLength={9}
-                  value={cep}
-                  onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
-                />
-                <ButtonShippingCost>
-                  <ShippingIcon />
-                </ButtonShippingCost>
-              </FieldShippingContainer>
-            </ShippingCostContainer>
+            {productTotalQty > 0 ? (
+              <>
+                <ShippingCostContainer>
+                  <p>
+                    Calcular <span>frete e prazo</span>
+                  </p>
+                  <FieldShippingContainer>
+                    <InputShippingCost
+                      maxLength={9}
+                      value={cep}
+                      onChange={(e) =>
+                        // eslint-disable-next-line implicit-arrow-linebreak
+                        setCep(
+                          e.target.value
+                            .replace(/\D/g, '')
+                            .replace(/^(\d{5})(\d{3})+?$/, '$1-$2'),
+                        )}
+                    />
+                    <ButtonShippingCost
+                      onClick={() => handleCalculateShipping()}
+                    >
+                      <ShippingIcon />
+                    </ButtonShippingCost>
+                  </FieldShippingContainer>
+                </ShippingCostContainer>
+                <ButtonAddCart>Adicione ao carrinho</ButtonAddCart>
+                <ButtonBuyNow>Comprar agora</ButtonBuyNow>
+              </>
+            ) : (
+              <>
+                <ButtonSoldOff>Esgotado</ButtonSoldOff>
+                <ButtonAlertMe>Avise-me quando disponível</ButtonAlertMe>
+              </>
+            )}
           </Sidebar>
         </ContainerProduct>
+        <TitleSection>Sobre o produto</TitleSection>
+        <DescriptionProduct>
+          A marca GAN sempre está inovando e dessa vez ela trouxe o modelo 356
+          R, que é o que tem de mais novo na sua linha de cubos profissionais
+          (mas sem o magnetismo). Cubo leve e extremamente rápido, possue também
+          um design nas peças internas que ajudam a deixar sua lubrificação mais
+          uniforme. Seu padrão é semelhante aos seus outros modelos, com um
+          tonalidade um pouco diferente no verde para diferenciar esse modelo
+          dos outros.
+        </DescriptionProduct>
+        <TitleSection>Especificações</TitleSection>
+        <DescriptionProduct>
+          <p>Cor: Stickerless (Mixed - Peças coloridas)</p>
+          <p>Marca: Gans Puzzle</p>
+          <p>Modelo: 356 R</p>
+          <p>Tamanho: 5,6 cm x 5,6 cm x 5,6 cm</p>
+        </DescriptionProduct>
+        <TitleSection>Acompanha</TitleSection>
+        <DescriptionProduct>
+          <p>Cubo Mágico Gan 356 R</p>
+          <p>Manual</p>
+          <p>Chave pra regulagem</p>
+        </DescriptionProduct>
       </ContainerCenter>
     </Main>
   );
 }
+
+const DescriptionProduct = styled.p`
+  font-weight: 500;
+  font-size: 18px;
+  color: #737070;
+  line-height: 25px;
+`;
+
+const TitleSection = styled.h3`
+  font-weight: 500;
+  font-size: 24px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+`;
+
+const ButtonBuyNow = styled(Button)`
+  width: 100%;
+  font-weight: 500;
+  font-size: 22px;
+`;
+
+const ButtonAddCart = styled(ButtonBuyNow)`
+  background-color: #16f948;
+  margin-bottom: 12px;
+`;
+
+const ButtonSoldOff = styled(ButtonAddCart)`
+  background-color: #f66565;
+  font-weight: bold;
+  margin-top: 15px;
+`;
+
+const ButtonAlertMe = styled(ButtonBuyNow)`
+  background-color: #1382e9;
+  font-size: 20px;
+`;
 
 const FieldShippingContainer = styled.div`
   display: flex;
@@ -179,13 +279,18 @@ const Price = styled.h2`
 `;
 
 const ContainerProduct = styled.div`
-  width: 900px;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  @media (max-width: 852px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const Sidebar = styled.div`
   width: 345px;
+  height: 100%;
   padding: 14px 20px;
   background: #ebebeb;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
@@ -195,7 +300,8 @@ const Sidebar = styled.div`
 `;
 
 const Main = styled.main`
-  display: flex;
+  width: 100%;
+  margin: 0 10px;
 `;
 
 const ArrowPassPrev = styled.div`
@@ -203,7 +309,6 @@ const ArrowPassPrev = styled.div`
   position: absolute;
   top: 50%;
   width: auto;
-  margin-top: -22px;
   padding: 16px;
   color: black;
   font-weight: bold;
@@ -238,9 +343,14 @@ const PictureNumberText = styled.div`
 `;
 
 const ContainerPictureShow = styled.div`
-  width: 500px;
+  max-width: 500px;
   height: 500px;
   position: relative;
+  margin-bottom: 15px;
+  @media (max-width: 400px) {
+    height: 300px;
+    min-width: 350px;
+  }
 `;
 
 const TitleProduct = styled.h1`
@@ -250,6 +360,7 @@ const TitleProduct = styled.h1`
 `;
 
 const ContainerCenter = styled.div`
+  max-width: 900px;
   margin: 130px auto;
 `;
 
