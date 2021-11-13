@@ -12,6 +12,7 @@ import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
 import ButtonForm from '../ButtonForm';
 import { postSignIn } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { throwError } from '../../services/utils';
 
 export default function SignInModal({ modal, setModal }) {
   const { setUser } = useAuth();
@@ -20,14 +21,6 @@ export default function SignInModal({ modal, setModal }) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
-
-  const throwError = (title) => {
-    Swal.fire({
-      icon: 'error',
-      confirmButtonColor: '#1382e9',
-      text: title,
-    });
-  };
 
   function submit(event) {
     event.preventDefault();

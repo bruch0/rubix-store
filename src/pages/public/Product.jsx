@@ -1,17 +1,25 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { calcularPrecoPrazo } from 'correios-brasil';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import Loader from 'react-loader-spinner';
 import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
 import Button from '../../components/Button';
+import { getProduct } from '../../services/api';
+import { convertToBRL } from '../../services/utils';
 
 export default function Product() {
-  useEffect(() => {}, []);
+  // eslint-disable-next-line no-unused-vars
+  const [product, setProduct] = useState([]);
   const [indexImage, setIndexImage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [cep, setCep] = useState('');
+
+  const { id: productId } = useParams();
 
   const senderInfo = {
     sCepOrigem: '20550110',
@@ -24,8 +32,6 @@ export default function Product() {
     nCdServico: ['04014', '04510'],
     nVlDiametro: '0',
   };
-
-  const productTotalQty = 0;
 
   const images = [
     {
@@ -53,10 +59,33 @@ export default function Product() {
   }
 
   function handleCalculateShipping() {
+    setIsLoading(true);
+    console.log(cep);
     senderInfo.sCepDestino = cep;
     calcularPrecoPrazo(senderInfo)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        console.log(res);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
+
+  useEffect(() => {
+    getProduct(productId)
+      .then((res) => {
+        console.log(res.data);
+        setProduct(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  if (product.length === 0) {
+    return <h1>Loading</h1>;
   }
 
   return (
@@ -68,14 +97,14 @@ export default function Product() {
           <TopLink to="/">3x3x3</TopLink>
         </ContainerTopLinks>
         <TitleProduct>
-          Cubo Mágico Profissional GAN 356 RS stickerless 3x3x3
+          {product.name}
         </TitleProduct>
         <ContainerProduct>
           <ContainerPictureShow>
             <PictureNumberText>
               {indexImage + 1}/{images.length}
             </PictureNumberText>
-            <Picture src={images[indexImage]?.url} alt="Imagem" />
+            <Picture src={images[indexImage].url} alt="Imagem" />
             <ArrowPassPrev onClick={() => controlPicture(-1)}>
               &#10094;
             </ArrowPassPrev>
@@ -84,17 +113,19 @@ export default function Product() {
             </ArrowPassNext>
           </ContainerPictureShow>
           <Sidebar>
-            <Price>R$ 129,99</Price>
+            <Price>{convertToBRL(product.value)}</Price>
             <HorizontalLine />
             <QuantityContainer>
               <SelectQuantity name="product_quantity">
-                {[...Array(10).keys()].map((e) => (
+                {[...Array(product.total_qty).keys()].map((e) => (
                   <option key={e}>{e + 1}</option>
                 ))}
               </SelectQuantity>
-              <AvailableQuantity>27 disponíveis</AvailableQuantity>
+              <AvailableQuantity>
+                {product.total_qty} {product.total_qty > 1 ? 'disponíveis' : 'disponível'}
+              </AvailableQuantity>
             </QuantityContainer>
-            {productTotalQty > 0 ? (
+            {product.total_qty > 0 ? (
               <>
                 <ShippingCostContainer>
                   <p>
@@ -115,7 +146,9 @@ export default function Product() {
                     <ButtonShippingCost
                       onClick={() => handleCalculateShipping()}
                     >
-                      <ShippingIcon />
+                      {isLoading
+                        ? <Loader type="TailSpin" color="#000" height={25} width={30} />
+                        : <ShippingIcon />}
                     </ButtonShippingCost>
                   </FieldShippingContainer>
                 </ShippingCostContainer>
@@ -131,34 +164,24 @@ export default function Product() {
           </Sidebar>
         </ContainerProduct>
         <TitleSection>Sobre o produto</TitleSection>
-        <DescriptionProduct>
-          A marca GAN sempre está inovando e dessa vez ela trouxe o modelo 356
-          R, que é o que tem de mais novo na sua linha de cubos profissionais
-          (mas sem o magnetismo). Cubo leve e extremamente rápido, possue também
-          um design nas peças internas que ajudam a deixar sua lubrificação mais
-          uniforme. Seu padrão é semelhante aos seus outros modelos, com um
-          tonalidade um pouco diferente no verde para diferenciar esse modelo
-          dos outros.
-        </DescriptionProduct>
+        <DescriptionProduct>{product.description}</DescriptionProduct>
         <TitleSection>Especificações</TitleSection>
         <DescriptionProduct>
-          <p>Cor: Stickerless (Mixed - Peças coloridas)</p>
-          <p>Marca: Gans Puzzle</p>
-          <p>Modelo: 356 R</p>
-          <p>Tamanho: 5,6 cm x 5,6 cm x 5,6 cm</p>
+          <p>Cor: {product.color}</p>
+          <p>Marca: {product.brand_id}</p>
+          <p>Modelo: {product.model}</p>
+          <p>Tamanho: {product.size}</p>
         </DescriptionProduct>
         <TitleSection>Acompanha</TitleSection>
         <DescriptionProduct>
-          <p>Cubo Mágico Gan 356 R</p>
-          <p>Manual</p>
-          <p>Chave pra regulagem</p>
+          {product.contains.map((item, index) => <p key={index}>{item.item}</p>)}
         </DescriptionProduct>
       </ContainerCenter>
     </Main>
   );
 }
 
-const DescriptionProduct = styled.p`
+const DescriptionProduct = styled.div`
   font-weight: 500;
   font-size: 18px;
   color: #737070;
@@ -217,6 +240,9 @@ const InputShippingCost = styled(InputForm)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25) !important;
   width: 72%;
   margin-bottom: 0;
+  @media (max-width: 350px) {
+    border-radius: 24px;
+  }
 `;
 
 const ShippingCostContainer = styled.div`

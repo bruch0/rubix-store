@@ -34,9 +34,12 @@ const postCart = (productId, productQty, token) => api.post('/cart', {
   product_qty: productQty,
 }, getConfig(token));
 
+const getProduct = (productId) => api.get(`/product/${productId}`);
+
 export {
   api,
   postSignIn,
   postSignUp,
   postCart,
+  getProduct,
 };

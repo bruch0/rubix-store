@@ -7,6 +7,7 @@ import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
 import { api, postCart } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { convertToBRL } from '../services/utils';
 
 function Products({ setModal }) {
   const [products, setProducts] = useState([]);
@@ -18,12 +19,6 @@ function Products({ setModal }) {
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  const currencyFormat = {
-    minimumFractionDigits: 2,
-    style: 'currency',
-    currency: 'BRL',
-  };
 
   useEffect(() => {
     let query = category ? `?category=${category}` : '';
@@ -124,10 +119,7 @@ function Products({ setModal }) {
                   <>
                     <Name>{product.name}</Name>
                     <Value>
-                      {(product.value / 100).toLocaleString(
-                        'pt-BR',
-                        currencyFormat,
-                      )}
+                      {convertToBRL(product.value)}
                     </Value>
                     <AddToCart onClick={(e) => handleAddCart(e, product.id)}>
                       Adicionar ao carrinho
