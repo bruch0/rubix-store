@@ -17,7 +17,8 @@
     "reactjs-popup": "^2.0.5",
     "styled-components": "^5.3.3",
     "sweetalert2": "^11.1.10",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "xml2js": "^0.4.23"
   },
   "scripts": {
     "start": "react-scripts start",
