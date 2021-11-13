@@ -162,7 +162,7 @@ export default function SignUpModal() {
               Cadastrar-se
             </ButtonForm>
             <ModalLink onClick={() => setModal('sign-in')}>
-              Já possui uma conta? Cadastre-se
+              Já possui uma conta? Faça login
             </ModalLink>
           </div>
         </form>

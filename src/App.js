@@ -4,9 +4,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/public/Home';
 import GlobalStyles from './shared/GlobalStyles';
 import Navbar from './components/Navbar';
-import { AuthProvider } from './contexts/AuthContext';
 import Product from './pages/public/Product';
 import ModalContext from './contexts/ModalContext';
+import { AuthProvider } from './contexts/AuthContext';
+import RecoverPassword from './pages/public/RecoverPassword';
 
 function App() {
   const [modal, setModal] = useState(null);
@@ -20,6 +21,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} exact />
             <Route path="/product/:id" element={<Product />} exact />
+            <Route path="/recover" element={<RecoverPassword />} exact />
           </Routes>
         </ModalContext.Provider>
       </BrowserRouter>

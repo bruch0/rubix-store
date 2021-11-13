@@ -36,10 +36,19 @@ const postCart = (productId, productQty, token) => api.post('/cart', {
 
 const getProduct = (productId) => api.get(`/product/${productId}`);
 
+const requestPasswordEmail = (email) => api.post('/recover-password', { email });
+
+const authorizeRecover = (token) => api.post('/authorize-password', { token });
+
+const changePassword = (email, newPassword) => api.post('/change-password', { email, newPassword });
+
 export {
   api,
   postSignIn,
   postSignUp,
   postCart,
   getProduct,
+  requestPasswordEmail,
+  authorizeRecover,
+  changePassword,
 };
