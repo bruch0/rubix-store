@@ -118,7 +118,7 @@ function Products({ setModal }) {
                 src={searchIcon}
               />
               <ProductInfo>
-                {product.total_qty === 0 ? (
+                {product.total_qty <= 0 ? (
                   <SoldOff>Esgotado</SoldOff>
                 ) : (
                   <>
