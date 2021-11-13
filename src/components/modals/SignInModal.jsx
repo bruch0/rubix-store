@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
@@ -12,8 +12,10 @@ import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
 import ButtonForm from '../ButtonForm';
 import { postSignIn } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { throwError } from '../../services/utils';
+import ModalContext from '../../contexts/ModalContext';
 
-export default function SignInModal({ modal, setModal }) {
+export default function SignInModal() {
   const { setUser } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -21,13 +23,7 @@ export default function SignInModal({ modal, setModal }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
-  const throwError = (title) => {
-    Swal.fire({
-      icon: 'error',
-      confirmButtonColor: '#1382e9',
-      text: title,
-    });
-  };
+  const { modal, setModal } = useContext(ModalContext);
 
   function submit(event) {
     event.preventDefault();

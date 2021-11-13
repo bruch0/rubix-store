@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import cart from '../assets/icons/cart.png';
@@ -8,15 +8,18 @@ import SignInModal from './modals/SignInModal';
 import PasswordRecoverModal from './modals/PasswordRecover';
 import StoreName from './StoreName';
 import { ReactComponent as UserIcon } from '../assets/icons/user.svg';
+import { ReactComponent as LogoIcon } from '../assets/icons/logo.svg';
 import { useAuth } from '../contexts/AuthContext';
+import ModalContext from '../contexts/ModalContext';
 
-function Navbar({ modal, setModal }) {
+function Navbar() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { setModal } = useContext(ModalContext);
 
   const categories = [
     { icon: categoryIcon, name: '2x2x2' },
-    { icon: categoryIcon, name: '3x3x2' },
+    { icon: categoryIcon, name: '3x3x3' },
     { icon: categoryIcon, name: '4x4x4' },
     { icon: categoryIcon, name: '5x5x5' },
     { icon: categoryIcon, name: 'BigCubes' },
@@ -30,13 +33,18 @@ function Navbar({ modal, setModal }) {
     <Nav>
       <StoreOptions>
         <Store to="/">
-          <LogoNavBar src="Assets/Banner/6.svg" alt="logo" />
+          <LogoNavBar alt="Rubix Store Logo" />
           <StoreName />
         </Store>
         <Options>
-          <Cart to="cart">
-            <img src={cart} alt="cart" />
-          </Cart>
+          <Cart
+            src={cart}
+            alt="cart"
+            onClick={() => {
+              if (!user) setModal('sign-in');
+              else navigate('/cart');
+            }}
+          />
           {user ? (
             <UserIcon onClick={() => navigate('/user')} />
           ) : (
@@ -59,9 +67,9 @@ function Navbar({ modal, setModal }) {
           </Category>
         ))}
       </Categories>
-      <SignInModal modal={modal} setModal={setModal} />
-      <SignUpModal modal={modal} setModal={setModal} />
-      <PasswordRecoverModal modal={modal} setModal={setModal} />
+      <SignInModal />
+      <SignUpModal />
+      <PasswordRecoverModal />
     </Nav>
   );
 }
@@ -109,9 +117,8 @@ const Store = styled(Link)`
   }
 `;
 
-const LogoNavBar = styled.img`
-  height: 80%;
-
+const LogoNavBar = styled(LogoIcon)`
+  width: 40px;
   @media (max-width: 600px) {
     height: 60%;
   }
@@ -131,12 +138,15 @@ const Options = styled.div`
   }
 `;
 
-const Cart = styled(Link)`
+const Cart = styled.img`
+  height: 25px;
+  height: 25px;
   margin: 0px;
   padding: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Action = styled.div`

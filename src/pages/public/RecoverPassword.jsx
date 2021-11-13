@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Swal from 'sweetalert2';
-import { authorizeRecover, changePassword } from '../../services/api.js';
+import { authorizeRecover, changePassword } from '../../services/api';
 import Logo from '../../components/Logo';
 import StoreName from '../../components/StoreName';
 import InputForm from '../../components/InputForm';
 import ButtonForm from '../../components/ButtonForm';
+import { throwError, throwSuccess } from '../../services/utils.js';
 
 function RecoverPassword() {
   const [email, setEmail] = useState('');
@@ -17,16 +17,8 @@ function RecoverPassword() {
   const token = new URLSearchParams(search).get('token');
 
   if (!token) {
-    useNavigate('/');
+    navigate('/');
   }
-
-  const throwError = (title) => {
-    Swal.fire({
-      icon: 'error',
-      confirmButtonColor: '#1382e9',
-      text: title,
-    });
-  };
 
   useEffect(() => {
     authorizeRecover(token)
@@ -47,11 +39,7 @@ function RecoverPassword() {
     setLoading(true);
     changePassword(email, newPassword)
       .then(() => {
-        Swal.fire({
-          icon: 'success',
-          confirmButtonColor: '#1382e9',
-          text: 'Senha trocada com sucesso',
-        });
+        throwSuccess('Senha trocada com sucesso');
         setLoading(false);
         navigate('/');
       })

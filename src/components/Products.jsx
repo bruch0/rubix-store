@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
@@ -6,24 +6,21 @@ import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
 import { api, postCart } from '../services/api';
+import { convertToBRL } from '../services/utils';
 import { useAuth } from '../contexts/AuthContext';
+import ModalContext from '../contexts/ModalContext';
 
-function Products({ setModal }) {
+function Products() {
   const [products, setProducts] = useState([]);
   const [filterDropdown, setFilterDropdown] = useState(false);
   const [order, setOrder] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const { search } = useLocation();
+
   const category = new URLSearchParams(search).get('category');
-
-  const { user } = useAuth();
   const navigate = useNavigate();
-
-  const currencyFormat = {
-    minimumFractionDigits: 2,
-    style: 'currency',
-    currency: 'BRL',
-  };
+  const { setModal } = useContext(ModalContext);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     let query = category ? `?category=${category}` : '';
@@ -57,7 +54,7 @@ function Products({ setModal }) {
           icon: 'success',
           confirmButtonColor: '#1382e9',
           text: 'Adicionado!',
-        }));
+        })).catch(() => logout());
     } else setModal('sign-in');
   };
 
@@ -114,8 +111,8 @@ function Products({ setModal }) {
           ? products.map((product) => (
             <Product key={product.id}>
               <ProductImg
-                onClick={() => navigate(`/products/${product.id}`)}
-                src={searchIcon}
+                onClick={() => navigate(`/product/${product.id}`)}
+                src={product.imageUrl}
               />
               <ProductInfo>
                 {product.total_qty === 0 ? (
@@ -124,10 +121,7 @@ function Products({ setModal }) {
                   <>
                     <Name>{product.name}</Name>
                     <Value>
-                      {(product.value / 100).toLocaleString(
-                        'pt-BR',
-                        currencyFormat,
-                      )}
+                      {convertToBRL(product.value)}
                     </Value>
                     <AddToCart onClick={(e) => handleAddCart(e, product.id)}>
                       Adicionar ao carrinho
