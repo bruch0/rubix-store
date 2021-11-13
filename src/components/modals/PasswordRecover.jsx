@@ -1,8 +1,7 @@
 /* eslint-disable no-restricted-globals */
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
-import Swal from 'sweetalert2';
 import Logo from '../Logo';
 import StoreName from '../StoreName';
 import InputForm from '../InputForm';
@@ -10,18 +9,14 @@ import '../../shared/styles/modal.css';
 import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
 import ButtonForm from '../ButtonForm';
 import { requestPasswordEmail } from '../../services/api';
+import { throwError, throwSuccess } from '../../services/utils';
+import ModalContext from '../../contexts/ModalContext';
 
-export default function PasswordRecoverModal({ modal, setModal }) {
+export default function PasswordRecoverModal() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const throwError = (title) => {
-    Swal.fire({
-      icon: 'error',
-      confirmButtonColor: '#1382e9',
-      text: title,
-    });
-  };
+  const { modal, setModal } = useContext(ModalContext);
 
   function submit(event) {
     event.preventDefault();
@@ -32,11 +27,7 @@ export default function PasswordRecoverModal({ modal, setModal }) {
     setIsLoading(true);
     requestPasswordEmail(email)
       .then(() => {
-        Swal.fire({
-          icon: 'success',
-          confirmButtonColor: '#1382e9',
-          text: 'Email enviado!',
-        });
+        throwSuccess('Email enviado!');
         setModal(null);
         setEmail('');
         setIsLoading(false);

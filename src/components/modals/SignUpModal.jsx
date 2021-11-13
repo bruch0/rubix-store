@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
@@ -12,8 +12,9 @@ import { ReactComponent as ShowPassIcon } from '../../assets/icons/show-pass.svg
 import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
 import ButtonForm from '../ButtonForm';
 import { postSignUp } from '../../services/api';
+import ModalContext from '../../contexts/ModalContext';
 
-export default function SignUpModal({ modal, setModal }) {
+export default function SignUpModal() {
   const [userInfo, setUserInfo] = useState({
     username: '',
     email: '',
@@ -24,6 +25,8 @@ export default function SignUpModal({ modal, setModal }) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  const { modal, setModal } = useContext(ModalContext);
 
   const throwError = (title) => {
     Swal.fire({
