@@ -1,11 +1,9 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable react/jsx-one-expression-per-line */
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { calcularPrecoPrazo } from 'correios-brasil';
 import { Link, useParams } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
+import Select from 'react-select';
 import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
 import Button from '../../components/Button';
@@ -85,7 +83,8 @@ export default function Product() {
     console.log(quantity);
     if (user) {
       postCart(productId, quantity, user.token)
-        .then(() => throwSuccess('Adicionado!')).catch(() => logout());
+        .then(() => throwSuccess('Adicionado!'))
+        .catch(() => logout());
     } else setModal('sign-in');
   };
 
@@ -112,13 +111,13 @@ export default function Product() {
           <ArrowLinks />
           <TopLink to="/">3x3x3</TopLink>
         </ContainerTopLinks>
-        <TitleProduct>
-          {product.name}
-        </TitleProduct>
+        <TitleProduct>{product.name}</TitleProduct>
         <ContainerProduct>
           <ContainerPictureShow>
             <PictureNumberText>
-              {indexImage + 1}/{images.length}
+              {indexImage + 1}
+              /
+              {images.length}
             </PictureNumberText>
             <Picture src={images[indexImage].url} alt="Imagem" />
             <ArrowPassPrev onClick={() => controlPicture(-1)}>
@@ -132,49 +131,54 @@ export default function Product() {
             <Price>{convertToBRL(product.value)}</Price>
             <HorizontalLine />
             <QuantityContainer>
-              <SelectQuantity>
-                {[...Array(product.total_qty).keys()].map((n) => (
-                  <option
-                    key={n}
-                    value={n + 1}
-                    onChange={(e) => setQuantity(e.target.value)}
-                  >
-                    {n + 1}
-                  </option>
-                ))}
-              </SelectQuantity>
+              <Select
+                options={
+                  [...Array(product.total_qty).keys()].map((i) => ({ value: i + 1, label: i + 1 }))
+                }
+              />
               <AvailableQuantity>
-                {product.total_qty} {product.total_qty > 1 ? 'disponíveis' : 'disponível'}
+                {product.total_qty}
+                {' '}
+                {product.total_qty > 1 ? 'disponíveis' : 'disponível'}
               </AvailableQuantity>
             </QuantityContainer>
             {product.total_qty > 0 ? (
               <>
                 <ShippingCostContainer>
                   <p>
-                    Calcular <span>frete e prazo</span>
+                    Calcular
+                    {' '}
+                    <span> frete e prazo </span>
                   </p>
                   <FieldShippingContainer>
                     <InputShippingCost
                       maxLength={9}
                       value={cep}
-                      onChange={(e) =>
-                        // eslint-disable-next-line implicit-arrow-linebreak
-                        setCep(
-                          e.target.value
-                            .replace(/\D/g, '')
-                            .replace(/^(\d{5})(\d{3})+?$/, '$1-$2'),
-                        )}
+                      onChange={(e) => setCep(
+                        e.target.value
+                          .replace(/\D/g, '')
+                          .replace(/^(\d{5})(\d{3})+?$/, '$1-$2'),
+                      )}
                     />
                     <ButtonShippingCost
                       onClick={() => handleCalculateShipping()}
                     >
-                      {isLoading
-                        ? <Loader type="TailSpin" color="#000" height={25} width={30} />
-                        : <ShippingIcon />}
+                      {isLoading ? (
+                        <Loader
+                          type="TailSpin"
+                          color="#000"
+                          height={25}
+                          width={30}
+                        />
+                      ) : (
+                        <ShippingIcon />
+                      )}
                     </ButtonShippingCost>
                   </FieldShippingContainer>
                 </ShippingCostContainer>
-                <ButtonAddCart onClick={handleAddCart}>Adicione ao carrinho</ButtonAddCart>
+                <ButtonAddCart onClick={handleAddCart}>
+                  Adicione ao carrinho
+                </ButtonAddCart>
                 <ButtonBuyNow>Comprar agora</ButtonBuyNow>
               </>
             ) : (
@@ -189,14 +193,16 @@ export default function Product() {
         <DescriptionProduct>{product.description}</DescriptionProduct>
         <TitleSection>Especificações</TitleSection>
         <DescriptionProduct>
-          <p>Cor: {product.color}</p>
-          <p>Marca: {product.brand_id}</p>
-          <p>Modelo: {product.model}</p>
-          <p>Tamanho: {product.size}</p>
+          <p>{`Cor: ${product.color}`}</p>
+          <p>{`Marca: ${product.brand_id}`}</p>
+          <p>{`Modelo: ${product.model}`}</p>
+          <p>{`Tamanho: ${product.size}`}</p>
         </DescriptionProduct>
         <TitleSection>Acompanha</TitleSection>
         <DescriptionProduct>
-          {product.contains.map((item, index) => <p key={index}>{item.item}</p>)}
+          {product.contains.map((item) => (
+            <p key={item.item}>{item.item}</p>
+          ))}
         </DescriptionProduct>
       </ContainerCenter>
     </Main>
@@ -285,7 +291,7 @@ const AvailableQuantity = styled.p`
   color: #737070;
 `;
 
-const SelectQuantity = styled.select`
+const SelectQuantity = styled(Select)`
   font-family: 'Quicksand', sans-serif;
   width: 150px;
   height: 40px;
