@@ -50,14 +50,11 @@ export default function Product() {
   function handleCalculateShipping() {
     setIsLoading(true);
     senderInfo.sCepDestino = cep;
-    console.log(senderInfo);
     calcularPrecoPrazo(senderInfo)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log(err);
         throwError(err);
       });
   }
@@ -78,8 +75,7 @@ export default function Product() {
 
   useEffect(() => {
     getProduct(productId)
-      .then((res) => setProduct(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => setProduct(res.data));
   }, []);
 
   if (product.length === 0) {

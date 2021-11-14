@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { ReactComponent as DownArrowIcon } from '../assets/icons/down-arrow.svg';
 import { ReactComponent as UpArrowIcon } from '../assets/icons/up-arrow.svg';
 import { ReactComponent as TrashIcon } from '../assets/icons/trash.svg';
-import { postCart } from '../services/api';
 import InputForm from './InputForm';
+import { postCart } from '../services/api';
 
 export default function DropdownQuantity({
   quantity,

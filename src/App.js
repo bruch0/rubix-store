@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/public/Home';
+import Checkout from './pages/public/Checkout';
 import GlobalStyles from './shared/GlobalStyles';
 import Navbar from './components/Navbar';
 import Product from './pages/public/Product';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/product/:id" element={<Product />} exact />
             <Route path="/recover" element={<RecoverPassword />} exact />
             <Route path="/cart" element={<Cart />} exact />
+            <Route path="/checkout" element={<Checkout />} exact />
           </Routes>
         </ModalContext.Provider>
       </BrowserRouter>

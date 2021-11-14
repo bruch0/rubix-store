@@ -45,6 +45,10 @@ const authorizeRecover = (token) => api.post('/authorize-password', { token });
 
 const changePassword = (email, newPassword) => api.post('/change-password', { email, newPassword });
 
+const getCart = (userId) => api.post('/checkout', { userId });
+
+const buyCart = (userId, totalValue, cart) => api.post('/buy-checkout', { userId, totalValue, cart });
+
 export {
   api,
   postSignIn,
@@ -55,4 +59,5 @@ export {
   authorizeRecover,
   changePassword,
   getCart,
+  buyCart,
 };

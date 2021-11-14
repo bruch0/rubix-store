@@ -117,7 +117,7 @@ function Products() {
                 src={product.imageUrl}
               />
               <ProductInfo>
-                {product.total_qty === 0 ? (
+                {product.total_qty <= 0 ? (
                   <SoldOff>Esgotado</SoldOff>
                 ) : (
                   <>
