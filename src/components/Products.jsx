@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Swal from 'sweetalert2';
 import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';

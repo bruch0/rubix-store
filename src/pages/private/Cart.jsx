@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { getCart } from '../../services/api';
-import Logo from '../../components/Logo';
 import { throwError, throwSuccess } from '../../services/utils.js';
 import ContainerCenter from '../../components/ContainerCenter';
 import { useAuth } from '../../contexts/AuthContext';
 import { convertToBRL } from '../../services/utils.js';
 import Button from '../../components/Button';
+import DropdownQuantity from '../../components/DropdownQuantity';
 
 export default function Cart() {
   const [items, setItems] = useState([]);
@@ -37,7 +37,10 @@ export default function Cart() {
               <NameItem>{item.name}</NameItem>
             </div>
             <div>
-              <Teste>{item.qty}</Teste>
+              <DropdownQuantity
+                quantityTotal={item.total_qty}
+                quantity={item.qty}
+              />
               <ValueItem>{convertToBRL(item.value)}</ValueItem>
             </div>
           </Item>
@@ -97,12 +100,6 @@ const ValueItem = styled.h4`
   }
 `;
 
-const Teste = styled.div`
-  width: 100px;
-  height: 50px;
-  background-color: red;
-`;
-
 const NameItem = styled.h3`
   font-size: 14px;
   font-weight: 500;
@@ -123,14 +120,21 @@ const ImageItem = styled.img`
 const Item = styled.div`
   display: flex;
   justify-content: space-between;
-  height: 80px;
   background: #ebebeb;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
   margin-bottom: 10px;
-  div {
+  flex-wrap: wrap;
+  > div {
     display: flex;
     align-items: center;
+    &:last-child {
+      margin: 20px auto;
+      @media (max-width: 600px) {
+        width: 90%;
+        justify-content: space-around;
+      }
+    }
   }
 `;
 
