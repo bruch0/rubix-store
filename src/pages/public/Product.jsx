@@ -67,7 +67,13 @@ export default function Product() {
     if (user) {
       postCart(productId, quantity, user.token)
         .then(() => throwSuccess('Adicionado!'))
-        .catch(() => logout());
+        .catch((error) => {
+          if (error.response.status === 400) {
+            throwError('Quantidade maxima atingida.');
+          } else if (error.response.status === 401) {
+            logout();
+          }
+        });
     } else setModal('sign-in');
   };
 

@@ -6,7 +6,7 @@ import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
 import { api, postCart } from '../services/api';
-import { convertToBRL } from '../services/utils';
+import { convertToBRL, throwError, throwSuccess } from '../services/utils';
 import { useAuth } from '../contexts/AuthContext';
 import ModalContext from '../contexts/ModalContext';
 
@@ -50,11 +50,14 @@ function Products() {
     e.stopPropagation();
     if (user) {
       postCart(productId, 1, user.token)
-        .then(() => Swal.fire({
-          icon: 'success',
-          confirmButtonColor: '#1382e9',
-          text: 'Adicionado!',
-        })).catch(() => logout());
+        .then(() => throwSuccess('Adicionado!'))
+        .catch((error) => {
+          if (error.response.status === 400) {
+            throwError('Quantidade maxima atingida.');
+          } else if (error.response.status === 401) {
+            logout();
+          }
+        });
     } else setModal('sign-in');
   };
 
