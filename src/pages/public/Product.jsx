@@ -62,8 +62,7 @@ export default function Product() {
       });
   }
 
-  const handleAddCart = (e) => {
-    e.stopPropagation();
+  const handleAddCart = () => {
     if (user) {
       postCart(productId, quantity, user.token)
         .then(() => throwSuccess('Adicionado!'))

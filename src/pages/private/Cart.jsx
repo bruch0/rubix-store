@@ -20,12 +20,11 @@ export default function Cart() {
   useEffect(() => {
     getCart(user.token).then((res) => {
       setItems(res.data);
-      console.log(res.data);
       setLoading(false);
     });
   }, [renderCart]);
 
-  if (loading) return <h1>CARREGANDO... CRIAR ALGO LEGAL</h1>;
+  if (loading) return <h1>CARREGANDO... CRIAR ALGO</h1>;
 
   if (items.length === 0) {
     return (

@@ -15,6 +15,7 @@ export default function DropdownQuantity({
   renderCart,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [inputNewQty, setInputNewQty] = useState('');
 
   function handleChangeQty(newQty) {
     postCart(productId, newQty, token, true).then(() => {
@@ -26,7 +27,16 @@ export default function DropdownQuantity({
   return (
     <>
       <Dropdown>
-        <SelectedItem isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+        <SelectedItem
+          isOpen={isOpen}
+          onClick={() => {
+            if (inputNewQty !== '' && isOpen) {
+              handleChangeQty(inputNewQty);
+              setInputNewQty('');
+            }
+            setIsOpen(!isOpen);
+          }}
+        >
           <QtyNumber>{quantity}</QtyNumber>
           {isOpen ? <UpArrow /> : <DownArrow />}
         </SelectedItem>
@@ -39,8 +49,17 @@ export default function DropdownQuantity({
           {quantityTotal > 5 && (
             <LastItem>
               <p>Quantidade</p>
-              <InputQty />
-              {}
+              <InputQty
+                value={inputNewQty}
+                type="number"
+                onChange={(e) => {
+                  // if (e.target.value === '') return;
+                  setInputNewQty(e.target.value);
+                }}
+              />
+              {inputNewQty > quantityTotal && (
+                <NotAvailableText>Não disponível</NotAvailableText>
+              )}
             </LastItem>
           )}
         </ContainerItems>
@@ -49,6 +68,11 @@ export default function DropdownQuantity({
     </>
   );
 }
+
+const NotAvailableText = styled.p`
+  color: #f66565;
+  font-size: 14px !important;
+`;
 
 const Trash = styled(TrashIcon)`
   cursor: pointer;
@@ -60,6 +84,7 @@ const InputQty = styled(InputForm)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
   margin-top: 5px;
+  margin-bottom: 5px;
   &:valid {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   }
@@ -105,7 +130,7 @@ const LastItem = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 5px;
+  padding: 10px;
   p {
     font-size: 16px;
     margin: 0 auto;
