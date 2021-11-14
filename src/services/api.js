@@ -29,9 +29,10 @@ const postSignUp = (name, email, password, cpf, phone) => api.post('/auth/sign-u
   phone,
 });
 
-const postCart = (productId, productQty, token) => api.post('/cart', {
+const postCart = (productId, productQty, token, isUpdate = false) => api.post('/cart', {
   product_id: productId,
   product_qty: productQty,
+  isUpdate,
 }, getConfig(token));
 
 const getCart = (token) => api.get('/cart', getConfig(token));

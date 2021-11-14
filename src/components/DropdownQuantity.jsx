@@ -2,26 +2,68 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as DownArrowIcon } from '../assets/icons/down-arrow.svg';
 import { ReactComponent as UpArrowIcon } from '../assets/icons/up-arrow.svg';
+import { ReactComponent as TrashIcon } from '../assets/icons/trash.svg';
+import { postCart } from '../services/api';
+import InputForm from './InputForm';
 
-export default function DropdownQuantity({ quantity, quantityTotal }) {
+export default function DropdownQuantity({
+  quantity,
+  quantityTotal,
+  productId,
+  token,
+  setRenderCart,
+  renderCart,
+}) {
   const [isOpen, setIsOpen] = useState(false);
+
+  function handleChangeQty(newQty) {
+    postCart(productId, newQty, token, true).then(() => {
+      setIsOpen(false);
+      setRenderCart(!renderCart);
+    });
+  }
+
   return (
-    <Dropdown>
-      <SelectedItem isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
-        <QtyNumber>{quantity}</QtyNumber>
-        {isOpen ? <UpArrow /> : <DownArrow />}
-      </SelectedItem>
-      <ContainerItems isOpen={isOpen}>
-        {[...Array(quantityTotal > 5 ? 5 : quantityTotal).keys()].map((n) => (
-          <Item key={n}>
-            <QtyNumber>{n + 1}</QtyNumber>
-          </Item>
-        ))}
-        {quantityTotal > 5 && <LastItem><p>Quantidade</p></LastItem>}
-      </ContainerItems>
-    </Dropdown>
+    <>
+      <Dropdown>
+        <SelectedItem isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+          <QtyNumber>{quantity}</QtyNumber>
+          {isOpen ? <UpArrow /> : <DownArrow />}
+        </SelectedItem>
+        <ContainerItems isOpen={isOpen}>
+          {[...Array(quantityTotal > 5 ? 5 : quantityTotal).keys()].map((n) => (
+            <Item key={n} onClick={() => handleChangeQty(n + 1)}>
+              <QtyNumber>{n + 1}</QtyNumber>
+            </Item>
+          ))}
+          {quantityTotal > 5 && (
+            <LastItem>
+              <p>Quantidade</p>
+              <InputQty />
+              {}
+            </LastItem>
+          )}
+        </ContainerItems>
+      </Dropdown>
+      <Trash onClick={() => handleChangeQty(0)} />
+    </>
   );
 }
+
+const Trash = styled(TrashIcon)`
+  cursor: pointer;
+`;
+
+const InputQty = styled(InputForm)`
+  background: #ffffff;
+  height: 30px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 22px;
+  margin-top: 5px;
+  &:valid {
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  }
+`;
 
 const QtyNumber = styled.p`
   margin: auto;
@@ -35,7 +77,8 @@ const ContainerItems = styled.div`
   top: 40px;
   background-color: #ebebeb;
   z-index: 1;
-  ${({ isOpen }) => (isOpen ? 'visibility: visible;' : 'visibility: collapse;')};
+  ${({ isOpen }) =>
+    isOpen ? 'visibility: visible;' : 'visibility: collapse;'};
   ${({ isOpen }) => (isOpen ? 'height: auto;' : 'height: 0;')};
 `;
 
@@ -60,10 +103,12 @@ const LastItem = styled.div`
   border-radius: 0px 0px 22px 22px;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  padding: 5px;
   p {
     font-size: 16px;
-    margin: 10px;
+    margin: 0 auto;
   }
 `;
 
@@ -71,7 +116,8 @@ const SelectedItem = styled.div`
   height: 40px;
   width: 100%;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  ${({ isOpen }) => (isOpen ? 'border-radius: 22px 22px 0px 0px;' : 'border-radius: 22px;')};
+  ${({ isOpen }) =>
+    isOpen ? 'border-radius: 22px 22px 0px 0px;' : 'border-radius: 22px;'};
   display: flex;
   justify-content: space-between;
 `;
@@ -82,6 +128,7 @@ const Dropdown = styled.div`
   font-weight: 500;
   font-size: 18px;
   position: relative;
+  margin-right: 25px;
   * {
     transition: none;
   }

@@ -11,6 +11,8 @@ import DropdownQuantity from '../../components/DropdownQuantity';
 
 export default function Cart() {
   const [items, setItems] = useState([]);
+  const [renderCart, setRenderCart] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const { user } = useAuth();
@@ -19,11 +21,23 @@ export default function Cart() {
     getCart(user.token).then((res) => {
       setItems(res.data);
       console.log(res.data);
+      setLoading(false);
     });
-  }, []);
+  }, [renderCart]);
+
+  if (loading) return <h1>CARREGANDO... CRIAR ALGO LEGAL</h1>;
 
   if (items.length === 0) {
-    return <h1>Loading</h1>;
+    return (
+      <ContainerCenter>
+        <EmptyText>
+          Você ainda não escolheu nada 😞
+          <ButtonBackHome onClick={() => navigate('/')}>
+            Voltar para a loja
+          </ButtonBackHome>
+        </EmptyText>
+      </ContainerCenter>
+    );
   }
 
   return (
@@ -40,6 +54,10 @@ export default function Cart() {
               <DropdownQuantity
                 quantityTotal={item.total_qty}
                 quantity={item.qty}
+                productId={item.product_id}
+                token={user.token}
+                setRenderCart={setRenderCart}
+                renderCart={renderCart}
               />
               <ValueItem>{convertToBRL(item.value)}</ValueItem>
             </div>
@@ -57,6 +75,12 @@ export default function Cart() {
     </ContainerCenter>
   );
 }
+
+const EmptyText = styled.h2`
+  font-size: 32px;
+  text-align: center;
+  margin-top: 40%;
+`;
 
 const ButtonBackHome = styled(Button)`
   margin-top: 20px;
