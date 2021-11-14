@@ -52,10 +52,7 @@ export default function DropdownQuantity({
               <InputQty
                 value={inputNewQty}
                 type="number"
-                onChange={(e) => {
-                  // if (e.target.value === '') return;
-                  setInputNewQty(e.target.value);
-                }}
+                onChange={(e) => setInputNewQty(e.target.value)}
               />
               {inputNewQty > quantityTotal && (
                 <NotAvailableText>Não disponível</NotAvailableText>
@@ -102,8 +99,7 @@ const ContainerItems = styled.div`
   top: 40px;
   background-color: #ebebeb;
   z-index: 1;
-  ${({ isOpen }) =>
-    isOpen ? 'visibility: visible;' : 'visibility: collapse;'};
+  ${({ isOpen }) => (isOpen ? 'visibility: visible;' : 'visibility: collapse;')};
   ${({ isOpen }) => (isOpen ? 'height: auto;' : 'height: 0;')};
 `;
 
@@ -141,8 +137,7 @@ const SelectedItem = styled.div`
   height: 40px;
   width: 100%;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  ${({ isOpen }) =>
-    isOpen ? 'border-radius: 22px 22px 0px 0px;' : 'border-radius: 22px;'};
+  ${({ isOpen }) => (isOpen ? 'border-radius: 22px 22px 0px 0px;' : 'border-radius: 22px;')};
   display: flex;
   justify-content: space-between;
 `;

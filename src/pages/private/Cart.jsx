@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { getCart } from '../../services/api';
-import { throwError, throwSuccess } from '../../services/utils.js';
+import { convertToBRL } from '../../services/utils.js';
 import ContainerCenter from '../../components/ContainerCenter';
 import { useAuth } from '../../contexts/AuthContext';
-import { convertToBRL } from '../../services/utils.js';
 import Button from '../../components/Button';
 import DropdownQuantity from '../../components/DropdownQuantity';
 
