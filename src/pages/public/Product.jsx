@@ -10,6 +10,7 @@ import { getProduct, postCart } from '../../services/api';
 import { convertToBRL, throwError, throwSuccess } from '../../services/utils';
 import { useAuth } from '../../contexts/AuthContext';
 import ModalContext from '../../contexts/ModalContext';
+import ContainerCenter from '../../components/ContainerCenter';
 
 export default function Product() {
   const [product, setProduct] = useState([]);
@@ -65,7 +66,8 @@ export default function Product() {
     e.stopPropagation();
     if (user) {
       postCart(productId, quantity, user.token)
-        .then(() => throwSuccess('Adicionado!')).catch(() => logout());
+        .then(() => throwSuccess('Adicionado!'))
+        .catch(() => logout());
     } else setModal('sign-in');
   };
 
@@ -80,93 +82,91 @@ export default function Product() {
   }
 
   return (
-    <Main>
-      <ContainerCenter>
-        <ContainerTopLinks>
-          <TopLink to="/">Home</TopLink>
-          <ArrowLinks />
-          <TopLink to={`/?category=${product.categoryName}`}>
-            {product.categoryName}
-          </TopLink>
-        </ContainerTopLinks>
-        <TitleProduct>
-          {product.name}
-        </TitleProduct>
-        <ContainerProduct>
-          <ContainerPictureShow>
-            <PictureNumberText>{`${indexImage + 1}/${product.images.length}`}</PictureNumberText>
-            <Picture src={product.images[indexImage].url} alt="Imagem" />
-            <ArrowPassPrev onClick={() => controlPicture(-1)}>
-              &#10094;
-            </ArrowPassPrev>
-            <ArrowPassNext onClick={() => controlPicture(1)}>
-              &#10095;
-            </ArrowPassNext>
-          </ContainerPictureShow>
-          <Sidebar>
-            <Price>{convertToBRL(product.value)}</Price>
-            <HorizontalLine />
-            <QuantityContainer>
-              <SelectQuantity onChange={(e) => setQuantity(e.target.value)}>
-                {[...Array(product.total_qty).keys()].map((n) => (
-                  <option key={n}>{n + 1}</option>
-                ))}
-              </SelectQuantity>
-              <AvailableQuantity>
-                {product.total_qty}
-                {' '}
-                {product.total_qty > 1 ? 'disponíveis' : 'disponível'}
-              </AvailableQuantity>
-            </QuantityContainer>
-            {product.total_qty > 0 ? (
-              <>
-                <ShippingCostContainer>
-                  <p>
-                    Calcular
-                    {' '}
-                    <span>frete e prazo</span>
-                  </p>
-                  <FieldShippingContainer>
-                    <InputShippingCost
-                      maxLength={9}
-                      value={cep}
-                      onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
-                    />
-                    <ButtonShippingCost
-                      onClick={() => handleCalculateShipping()}
-                    >
-                      {isLoading
-                        ? <Loader type="TailSpin" color="#000" height={25} width={30} />
-                        : <ShippingIcon />}
-                    </ButtonShippingCost>
-                  </FieldShippingContainer>
-                </ShippingCostContainer>
-                <ButtonAddCart onClick={handleAddCart}>Adicione ao carrinho</ButtonAddCart>
-                <ButtonBuyNow>Comprar agora</ButtonBuyNow>
-              </>
-            ) : (
-              <>
-                <ButtonSoldOff>Esgotado</ButtonSoldOff>
-                <ButtonAlertMe>Avise-me quando disponível</ButtonAlertMe>
-              </>
-            )}
-          </Sidebar>
-        </ContainerProduct>
-        <TitleSection>Sobre o produto</TitleSection>
-        <DescriptionProduct>{product.description}</DescriptionProduct>
-        <TitleSection>Especificações</TitleSection>
-        <DescriptionProduct>
-          <p>{`Cor: ${product.color}`}</p>
-          <p>{`Marca: ${product.brandName}`}</p>
-          <p>{`Modelo: ${product.model}`}</p>
-          <p>{`Tamanho: ${product.size}`}</p>
-        </DescriptionProduct>
-        <TitleSection>Acompanha</TitleSection>
-        <DescriptionProduct>
-          {product.contains.map((item) => <p key={item.item}>{item.item}</p>)}
-        </DescriptionProduct>
-      </ContainerCenter>
-    </Main>
+    <ContainerCenter>
+      <ContainerTopLinks>
+        <TopLink to="/">Home</TopLink>
+        <ArrowLinks />
+        <TopLink to={`/?category=${product.categoryName}`}>
+          {product.categoryName}
+        </TopLink>
+      </ContainerTopLinks>
+      <TitleProduct>
+        {product.name}
+      </TitleProduct>
+      <ContainerProduct>
+        <ContainerPictureShow>
+          <PictureNumberText>{`${indexImage + 1}/${product.images.length}`}</PictureNumberText>
+          <Picture src={product.images[indexImage].url} alt="Imagem" />
+          <ArrowPassPrev onClick={() => controlPicture(-1)}>
+            &#10094;
+          </ArrowPassPrev>
+          <ArrowPassNext onClick={() => controlPicture(1)}>
+            &#10095;
+          </ArrowPassNext>
+        </ContainerPictureShow>
+        <Sidebar>
+          <Price>{convertToBRL(product.value)}</Price>
+          <HorizontalLine />
+          <QuantityContainer>
+            <SelectQuantity onChange={(e) => setQuantity(e.target.value)}>
+              {[...Array(product.total_qty).keys()].map((n) => (
+                <option key={n}>{n + 1}</option>
+              ))}
+            </SelectQuantity>
+            <AvailableQuantity>
+              {product.total_qty}
+              {' '}
+              {product.total_qty > 1 ? 'disponíveis' : 'disponível'}
+            </AvailableQuantity>
+          </QuantityContainer>
+          {product.total_qty > 0 ? (
+            <>
+              <ShippingCostContainer>
+                <p>
+                  Calcular
+                  {' '}
+                  <span>frete e prazo</span>
+                </p>
+                <FieldShippingContainer>
+                  <InputShippingCost
+                    maxLength={9}
+                    value={cep}
+                    onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
+                  />
+                  <ButtonShippingCost
+                    onClick={() => handleCalculateShipping()}
+                  >
+                    {isLoading
+                      ? <Loader type="TailSpin" color="#000" height={25} width={30} />
+                      : <ShippingIcon />}
+                  </ButtonShippingCost>
+                </FieldShippingContainer>
+              </ShippingCostContainer>
+              <ButtonAddCart onClick={handleAddCart}>Adicione ao carrinho</ButtonAddCart>
+              <ButtonBuyNow>Comprar agora</ButtonBuyNow>
+            </>
+          ) : (
+            <>
+              <ButtonSoldOff>Esgotado</ButtonSoldOff>
+              <ButtonAlertMe>Avise-me quando disponível</ButtonAlertMe>
+            </>
+          )}
+        </Sidebar>
+      </ContainerProduct>
+      <TitleSection>Sobre o produto</TitleSection>
+      <DescriptionProduct>{product.description}</DescriptionProduct>
+      <TitleSection>Especificações</TitleSection>
+      <DescriptionProduct>
+        <p>{`Cor: ${product.color}`}</p>
+        <p>{`Marca: ${product.brandName}`}</p>
+        <p>{`Modelo: ${product.model}`}</p>
+        <p>{`Tamanho: ${product.size}`}</p>
+      </DescriptionProduct>
+      <TitleSection>Acompanha</TitleSection>
+      <DescriptionProduct>
+        {product.contains.map((item) => <p key={item.item}>{item.item}</p>)}
+      </DescriptionProduct>
+    </ContainerCenter>
   );
 }
 
@@ -314,11 +314,6 @@ const Sidebar = styled.div`
   flex-direction: column;
 `;
 
-const Main = styled.main`
-  width: 100%;
-  margin: 0 10px;
-`;
-
 const ArrowPassPrev = styled.div`
   cursor: pointer;
   position: absolute;
@@ -372,11 +367,6 @@ const TitleProduct = styled.h1`
   font-weight: 500;
   font-size: 24px;
   margin: 30px 0;
-`;
-
-const ContainerCenter = styled.div`
-  max-width: 900px;
-  margin: 130px auto;
 `;
 
 const ContainerTopLinks = styled.div`

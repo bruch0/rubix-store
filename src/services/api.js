@@ -34,6 +34,8 @@ const postCart = (productId, productQty, token) => api.post('/cart', {
   product_qty: productQty,
 }, getConfig(token));
 
+const getCart = (token) => api.get('/cart', getConfig(token));
+
 const getProduct = (productId) => api.get(`/product/${productId}`);
 
 const requestPasswordEmail = (email) => api.post('/recover-password', { email });
@@ -51,4 +53,5 @@ export {
   requestPasswordEmail,
   authorizeRecover,
   changePassword,
+  getCart,
 };
