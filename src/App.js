@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/public/Home';
-import Checkout from './pages/public/Checkout';
+import Checkout from './pages/private/Checkout';
 import GlobalStyles from './shared/GlobalStyles';
 import Navbar from './components/Navbar';
 import Product from './pages/public/Product';

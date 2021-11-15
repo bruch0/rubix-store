@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import { getDelivery } from '../../services/utils.js';
-import { getCart, buyCart } from '../../services/api.js';
+import { getCartCheckout, buyCartCheckout } from '../../services/api.js';
 import { useAuth } from '../../contexts/AuthContext';
 import deliveryLogo from '../../assets/icons/delivery.png';
 
