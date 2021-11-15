@@ -49,6 +49,8 @@ const getCartCheckout = (userId) => api.post('/checkout', { userId });
 
 const buyCartCheckout = (userId, totalValue, cart) => api.post('/buy-checkout', { userId, totalValue, cart });
 
+const getUserInfo = (token) => api.get('/user', getConfig(token));
+
 export {
   api,
   postSignIn,
@@ -61,4 +63,5 @@ export {
   changePassword,
   getCartCheckout,
   buyCartCheckout,
+  getUserInfo,
 };
