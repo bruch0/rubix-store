@@ -21,7 +21,7 @@ export default function User() {
   }, []);
 
   if (userInfo.length === 0) return <h1>CARREGANDO... CRIAR ALGO</h1>;
-  console.log(userInfo);
+
   return (
     <ContainerCenter>
       <SectionTitle>Meus dados</SectionTitle>

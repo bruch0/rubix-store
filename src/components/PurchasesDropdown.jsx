@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import dayjs from 'dayjs';
 import { convertToBRL } from '../services/utils';
 
 export default function PurchasesDropdown({ purchase }) {
@@ -14,7 +15,7 @@ export default function PurchasesDropdown({ purchase }) {
           </HeaderContainer>
           <HeaderContainer>
             <h3>Data</h3>
-            <p>XX/11/2021</p>
+            <p>{dayjs(purchase.creation_date).format('DD/MM/YYYY')}</p>
           </HeaderContainer>
           <HeaderContainer>
             <h3>Total</h3>
