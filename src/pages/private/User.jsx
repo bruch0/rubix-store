@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import NumberFormat from 'react-number-format';
 import { getUserInfo } from '../../services/api';
 import ContainerCenter from '../../components/ContainerCenter';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,7 +10,6 @@ import PurchasesDropdown from '../../components/PurchasesDropdown';
 export default function User() {
   const [userInfo, setUserInfo] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -37,11 +37,23 @@ export default function User() {
         </InfoContainer>
         <InfoContainer>
           <InfoTitle>CPF</InfoTitle>
-          <InfoInput width="200px">{userInfo.cpf}</InfoInput>
+          <InfoInput width="200px">
+            <NumberFormat
+              value={userInfo.phone}
+              displayType="text"
+              format="###.###.###-##"
+            />
+          </InfoInput>
         </InfoContainer>
         <InfoContainer>
           <InfoTitle>Telefone</InfoTitle>
-          <InfoInput width="200px">{userInfo.phone}</InfoInput>
+          <InfoInput width="200px">
+            <NumberFormat
+              value={userInfo.phone}
+              displayType="text"
+              format="(##) #####-####"
+            />
+          </InfoInput>
         </InfoContainer>
         <InfoContainer>
           <InfoTitle>E-mail</InfoTitle>
@@ -50,10 +62,7 @@ export default function User() {
       </PersonalInfoContainer>
       <SectionTitle>Meus pedidos</SectionTitle>
       {userInfo.purchases?.map((purchase) => (
-        <PurchasesDropdown
-          key={purchase.id}
-          purchase={purchase}
-        />
+        <PurchasesDropdown key={purchase.id} purchase={purchase} />
       ))}
     </ContainerCenter>
   );

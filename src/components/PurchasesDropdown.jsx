@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import InputForm from './InputForm';
 import { convertToBRL } from '../services/utils';
+import NumberFormat from 'react-number-format';
 
 export default function PurchasesDropdown({ purchase }) {
   const [isOpen, setIsOpen] = useState(false);
