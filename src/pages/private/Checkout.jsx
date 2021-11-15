@@ -56,12 +56,12 @@ function Checkout() {
                     <ProductImg src={product.productUrl} />
                     <ProductName>{product.productName}</ProductName>
                   </Container>
-                  <Container>
+                  <ContainerValueQty>
                     <ProductQty>{product.productQty}</ProductQty>
                     <ProductValue>
                       {(product.totalValue / 100).toLocaleString('pt-BR', currencyFormat)}
                     </ProductValue>
-                  </Container>
+                  </ContainerValueQty>
                 </Product>
               )) : ''}
             </ProductsContainer>
@@ -74,7 +74,7 @@ function Checkout() {
                   value={cep}
                   onChange={(e) => setCep(e.target.value)}
                 />
-                <Calculate onClick={() => getDelivery(setDelivery, cep, (weight / 100))}><img src={deliveryLogo} alt="Calcular" /></Calculate>
+                <Calculate onClick={() => getDelivery(setDelivery, cep, (weight / 1000))}><img src={deliveryLogo} alt="Calcular" /></Calculate>
               </div>
               <DeliveryValue>
                 {delivery !== 0 ? `SEDEX - 6 dias úteis - R$ ${(delivery / 100).toFixed(2).replace('.', ',')}` : ''}
@@ -125,10 +125,18 @@ const Title = styled.p`
 const ContainerCheckout = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
 `;
 
 const ProductsContainer = styled.section`
   width: 70%;
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
 `;
 
 const Product = styled.div`
@@ -141,6 +149,11 @@ const Product = styled.div`
   border-radius: 22px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   margin-bottom: 25px;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    height: 130px;
+  }
 `;
 
 const ProductImg = styled.img`
@@ -151,11 +164,15 @@ const ProductImg = styled.img`
 `;
 
 const ProductName = styled.p`
-  font-size: 20px;
+  font-size: 1.2vw;
   font-weight: 600;
 
-  @media (max-width: 600px) {
-    font-size: 15px;
+  @media (max-width: 1000px) {
+    font-size: 1.5vw;
+  }
+
+  @media (max-width: 900px) {
+    font-size: 3.5vw;
   }
 `;
 
@@ -164,6 +181,31 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   min-width: 300px;
+
+  @media (max-width: 1000px) {
+    min-width: 250px;
+  }
+  
+  @media (max-width: 800px) {
+    min-width: 100%;
+  }
+`;
+
+const ContainerValueQty = styled.div`
+display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 300px;
+
+  @media (max-width: 1000px) {
+    min-width: 250px;
+  }
+  
+  @media (max-width: 800px) {
+    min-width: 90%;
+    flex-direction: row-reverse;
+    margin-bottom: 15px;
+  }
 `;
 
 const ProductQty = styled.div`
@@ -180,10 +222,22 @@ const ProductQty = styled.div`
 `;
 
 const ProductValue = styled.p`
-  font-size: 35px;
+  font-size: 2vw;
   font-weight: 700;
   color: #1382E9;
   margin-right: 30px;
+
+  @media (max-width: 1500px) {
+    font-size: 2.5vw;
+  }
+
+  @media (max-width: 1000px) {
+    font-size: 3.5vw;
+  }
+  
+  @media (max-width: 800px) {
+    font-size: 5vw;
+  }
 `;
 
 const Total = styled.section`
@@ -198,26 +252,38 @@ const Total = styled.section`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 
   p {
-      margin: 10px 3%;
-      font-size: 20px;
-      font-weight: 500;
+    margin: 10px 3%;
+    font-size: 20px;
+    font-weight: 500;
   }
 
   > div {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  @media (max-width: 800px) {
+    width: 100%;
   }
 `;
 
 const Value = styled.div`
   width: 100%;
   text-align: center;
-  font-size: 50px;
+  font-size: 3vw;
   font-weight: 700;
   color: #1382E9;
   padding-bottom: 5px;
   border-bottom: 2px solid black;
+
+  @media (max-width: 1000px) {
+    font-size: 4vw;
+  }
+
+  @media (max-width: 800px) {
+    font-size: 10vw;
+  }
 `;
 
 const CepForm = styled.input`

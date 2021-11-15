@@ -320,16 +320,20 @@ const Product = styled.div`
 const ProductImg = styled.img`
   cursor: pointer;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 22px 22px 0px 0px;
 `;
 
 const ProductInfo = styled.div`
   display: flex;
   height: 100%;
-  min-height: 100px;
+  min-height: 130px;
   flex-direction: column;
   text-align: center;
   justify-content: center;
   margin-top: 15px;
+  position: relative;
 `;
 
 const SoldOff = styled.div`
@@ -362,6 +366,9 @@ const Value = styled.p`
 
 const AddToCart = styled.button`
   width: 90%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   margin: 0px;
   margin-left: 5%;
   height: 0px;
