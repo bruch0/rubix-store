@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
+import Loader from 'react-loader-spinner';
 import { getDelivery } from '../../services/utils.js';
 import { getCartCheckout, buyCartCheckout } from '../../services/api.js';
 import { useAuth } from '../../contexts/AuthContext';
@@ -44,7 +45,7 @@ function Checkout() {
   }, [user]);
 
   return (
-    <CheckoutPage isEmpty={cart?.length === 0}>
+    <CheckoutPage isLoading={loading && cart === null ? 1 : 0}>
       <Title>Checkout</Title>
       {cart?.length === 0 ? 'Opa, você não tem nada no carrinho'
         : (
@@ -70,32 +71,47 @@ function Checkout() {
               <p>Calcular frete e prazo</p>
               <div>
                 <CepForm
-                  type="number"
+                  maxLength={9}
                   value={cep}
-                  onChange={(e) => setCep(e.target.value)}
+                  onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
                 />
-                <Calculate onClick={() => getDelivery(setDelivery, cep, (weight / 1000))}><img src={deliveryLogo} alt="Calcular" /></Calculate>
+                <Calculate
+                  isLoading={loading ? 1 : 0}
+                  onClick={() => {
+                    setLoading(true);
+                    getDelivery(setDelivery, cep, (weight / 1000));
+                    setTimeout(() => setLoading(false), 1000);
+                  }}
+                >
+                  {loading
+                    ? <Loader type="TailSpin" color="#000" height={25} width={30} />
+                    : <img src={deliveryLogo} alt="Calcular" />}
+                </Calculate>
               </div>
               <DeliveryValue>
                 {delivery !== 0 ? `SEDEX - 6 dias úteis - R$ ${(delivery / 100).toFixed(2).replace('.', ',')}` : ''}
               </DeliveryValue>
               <ButtonForm
+                disabled={(cep.length === 9 && delivery !== 0) ? 0 : 1}
                 onClick={() => {
                   setLoading(true);
                   buyCartCheckout(user.userId, total + delivery, cart)
-                    .then(() => Swal.fire({
-                      icon: 'success',
-                      confirmButtonColor: '#1382e9',
-                      text: 'Compra realizada!',
-                    }));
-                  setCart([]);
-                  setTotal(0);
-                  setWeight(0);
-                  setDelivery(0);
+                    .then(() => {
+                      setCart([]);
+                      setTotal(0);
+                      setWeight(0);
+                      setDelivery(0);
+                      Swal.fire({
+                        icon: 'success',
+                        confirmButtonColor: '#1382e9',
+                        text: 'Compra realizada!',
+                      });
+                      setLoading(false);
+                    });
                 }}
                 isLoading={loading ? 1 : 0}
               >
-                Comprar
+                {loading ? <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} /> : 'Comprar'}
               </ButtonForm>
             </Total>
           </ContainerCheckout>
@@ -308,6 +324,7 @@ const Calculate = styled.button`
   background-color: #FFFFFF;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+  pointer-events: ${(props) => (props.isLoading ? 'none' : 'all')};
 `;
 
 const DeliveryValue = styled.p`
@@ -320,7 +337,7 @@ const ButtonForm = styled.button`
   width: 100%;
   height: 45px;
   border: none;
-  background-color: #16F948;
+  background-color: ${(props) => (props.disabled ? '#2e2f2e' : '#16F948')};
   color: #FFF;
   border-radius: 22px;
   cursor: pointer;
@@ -328,11 +345,7 @@ const ButtonForm = styled.button`
   font-size: 30px;
   font-family: 'Quicksand', sans-serif;
   margin-top: 25px;
-
-  &:disabled {
-    opacity: 60%;
-    cursor: none;
-  }
+  pointer-events: ${(props) => (props.isLoading ? 'none' : 'all')};
 `;
 
 export default Checkout;
