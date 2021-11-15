@@ -17,11 +17,11 @@ export default function Cart() {
   const { user } = useAuth();
 
   useEffect(() => {
-    getCart(user.token).then((res) => {
+    getCart(user?.token).then((res) => {
       setItems(res.data);
       setLoading(false);
     });
-  }, [renderCart]);
+  }, [renderCart, user]);
 
   if (loading) return <h1>CARREGANDO... CRIAR ALGO</h1>;
 
@@ -43,7 +43,7 @@ export default function Cart() {
       <TitleCart />
       <ItemsListContainer>
         {items.map((item) => (
-          <Item>
+          <Item key={item.product_id}>
             <div>
               <ImageItem src={item.imageUrl} />
               <NameItem>{item.name}</NameItem>

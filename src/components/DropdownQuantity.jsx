@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { ReactComponent as DownArrowIcon } from '../assets/icons/down-arrow.svg';
 import { ReactComponent as UpArrowIcon } from '../assets/icons/up-arrow.svg';
 import { ReactComponent as TrashIcon } from '../assets/icons/trash.svg';
@@ -24,18 +25,21 @@ export default function DropdownQuantity({
     });
   }
 
+  function handleInputQty() {
+    if (inputNewQty !== '' && isOpen) {
+      handleChangeQty(inputNewQty);
+      setInputNewQty('');
+    }
+  }
+
+  const refClickOutside = useDetectClickOutside({ onTriggered: handleInputQty });
+
   return (
     <>
-      <Dropdown>
+      <Dropdown ref={refClickOutside}>
         <SelectedItem
           isOpen={isOpen}
-          onClick={() => {
-            if (inputNewQty !== '' && isOpen) {
-              handleChangeQty(inputNewQty);
-              setInputNewQty('');
-            }
-            setIsOpen(!isOpen);
-          }}
+          onClick={() => setIsOpen(!isOpen)}
         >
           <QtyNumber>{quantity}</QtyNumber>
           {isOpen ? <UpArrow /> : <DownArrow />}

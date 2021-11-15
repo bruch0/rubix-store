@@ -27,7 +27,7 @@ const AuthProvider = (props) => {
     logout,
     user,
   };
-
+  console.log(user);
   return <AuthContext.Provider value={authContextValue} {...props} />;
 };
 
