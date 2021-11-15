@@ -45,8 +45,7 @@ function Products() {
     setTimeout(() => setFilterDropdown(false), 110);
   };
 
-  const handleAddCart = (e, productId) => {
-    e.stopPropagation();
+  const handleAddCart = (productId) => {
     if (user) {
       postCart(productId, 1, user.token)
         .then(() => throwSuccess('Adicionado!'))
@@ -125,7 +124,7 @@ function Products() {
                     <Value>
                       {convertToBRL(product.value)}
                     </Value>
-                    <AddToCart onClick={(e) => handleAddCart(e, product.id)}>
+                    <AddToCart onClick={() => handleAddCart(product.id)}>
                       Adicionar ao carrinho
                     </AddToCart>
                   </>

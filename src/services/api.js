@@ -45,7 +45,7 @@ const authorizeRecover = (token) => api.post('/authorize-password', { token });
 
 const changePassword = (email, newPassword) => api.post('/change-password', { email, newPassword });
 
-const getCartCheckout = (userId) => api.post('/checkout', getConfig(token));
+const getCartCheckout = (userId) => api.post('/checkout', { userId });
 
 const buyCartCheckout = (userId, totalValue, cart) => api.post('/buy-checkout', { userId, totalValue, cart });
 
