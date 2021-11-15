@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
+import Loader from 'react-loader-spinner';
 import { getDelivery } from '../../services/utils.js';
 import { getCartCheckout, buyCartCheckout } from '../../services/api.js';
 import { useAuth } from '../../contexts/AuthContext';
@@ -44,7 +45,7 @@ function Checkout() {
   }, [user]);
 
   return (
-    <CheckoutPage isEmpty={cart?.length === 0}>
+    <CheckoutPage isLoading={loading && cart === null ? 1 : 0}>
       <Title>Checkout</Title>
       {cart?.length === 0 ? 'Opa, você não tem nada no carrinho'
         : (
@@ -56,12 +57,12 @@ function Checkout() {
                     <ProductImg src={product.productUrl} />
                     <ProductName>{product.productName}</ProductName>
                   </Container>
-                  <Container>
+                  <ContainerValueQty>
                     <ProductQty>{product.productQty}</ProductQty>
                     <ProductValue>
                       {(product.totalValue / 100).toLocaleString('pt-BR', currencyFormat)}
                     </ProductValue>
-                  </Container>
+                  </ContainerValueQty>
                 </Product>
               )) : ''}
             </ProductsContainer>
@@ -70,32 +71,47 @@ function Checkout() {
               <p>Calcular frete e prazo</p>
               <div>
                 <CepForm
-                  type="number"
+                  maxLength={9}
                   value={cep}
-                  onChange={(e) => setCep(e.target.value)}
+                  onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
                 />
-                <Calculate onClick={() => getDelivery(setDelivery, cep, (weight / 100))}><img src={deliveryLogo} alt="Calcular" /></Calculate>
+                <Calculate
+                  isLoading={loading ? 1 : 0}
+                  onClick={() => {
+                    setLoading(true);
+                    getDelivery(setDelivery, cep, (weight / 1000));
+                    setTimeout(() => setLoading(false), 1000);
+                  }}
+                >
+                  {loading
+                    ? <Loader type="TailSpin" color="#000" height={25} width={30} />
+                    : <img src={deliveryLogo} alt="Calcular" />}
+                </Calculate>
               </div>
               <DeliveryValue>
                 {delivery !== 0 ? `SEDEX - 6 dias úteis - R$ ${(delivery / 100).toFixed(2).replace('.', ',')}` : ''}
               </DeliveryValue>
               <ButtonForm
+                disabled={(cep.length === 9 && delivery !== 0) ? 0 : 1}
                 onClick={() => {
                   setLoading(true);
                   buyCartCheckout(user.userId, total + delivery, cart)
-                    .then(() => Swal.fire({
-                      icon: 'success',
-                      confirmButtonColor: '#1382e9',
-                      text: 'Compra realizada!',
-                    }));
-                  setCart([]);
-                  setTotal(0);
-                  setWeight(0);
-                  setDelivery(0);
+                    .then(() => {
+                      setCart([]);
+                      setTotal(0);
+                      setWeight(0);
+                      setDelivery(0);
+                      Swal.fire({
+                        icon: 'success',
+                        confirmButtonColor: '#1382e9',
+                        text: 'Compra realizada!',
+                      });
+                      setLoading(false);
+                    });
                 }}
                 isLoading={loading ? 1 : 0}
               >
-                Comprar
+                {loading ? <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} /> : 'Comprar'}
               </ButtonForm>
             </Total>
           </ContainerCheckout>
@@ -125,10 +141,18 @@ const Title = styled.p`
 const ContainerCheckout = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
 `;
 
 const ProductsContainer = styled.section`
   width: 70%;
+
+  @media (max-width: 800px) {
+    width: 100%;
+  }
 `;
 
 const Product = styled.div`
@@ -141,6 +165,11 @@ const Product = styled.div`
   border-radius: 22px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   margin-bottom: 25px;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    height: 130px;
+  }
 `;
 
 const ProductImg = styled.img`
@@ -151,11 +180,15 @@ const ProductImg = styled.img`
 `;
 
 const ProductName = styled.p`
-  font-size: 20px;
+  font-size: 1.2vw;
   font-weight: 600;
 
-  @media (max-width: 600px) {
-    font-size: 15px;
+  @media (max-width: 1000px) {
+    font-size: 1.5vw;
+  }
+
+  @media (max-width: 900px) {
+    font-size: 3.5vw;
   }
 `;
 
@@ -164,6 +197,31 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   min-width: 300px;
+
+  @media (max-width: 1000px) {
+    min-width: 250px;
+  }
+  
+  @media (max-width: 800px) {
+    min-width: 100%;
+  }
+`;
+
+const ContainerValueQty = styled.div`
+display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 300px;
+
+  @media (max-width: 1000px) {
+    min-width: 250px;
+  }
+  
+  @media (max-width: 800px) {
+    min-width: 90%;
+    flex-direction: row-reverse;
+    margin-bottom: 15px;
+  }
 `;
 
 const ProductQty = styled.div`
@@ -180,10 +238,22 @@ const ProductQty = styled.div`
 `;
 
 const ProductValue = styled.p`
-  font-size: 35px;
+  font-size: 2vw;
   font-weight: 700;
   color: #1382E9;
   margin-right: 30px;
+
+  @media (max-width: 1500px) {
+    font-size: 2.5vw;
+  }
+
+  @media (max-width: 1000px) {
+    font-size: 3.5vw;
+  }
+  
+  @media (max-width: 800px) {
+    font-size: 5vw;
+  }
 `;
 
 const Total = styled.section`
@@ -198,26 +268,38 @@ const Total = styled.section`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 
   p {
-      margin: 10px 3%;
-      font-size: 20px;
-      font-weight: 500;
+    margin: 10px 3%;
+    font-size: 20px;
+    font-weight: 500;
   }
 
   > div {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  @media (max-width: 800px) {
+    width: 100%;
   }
 `;
 
 const Value = styled.div`
   width: 100%;
   text-align: center;
-  font-size: 50px;
+  font-size: 3vw;
   font-weight: 700;
   color: #1382E9;
   padding-bottom: 5px;
   border-bottom: 2px solid black;
+
+  @media (max-width: 1000px) {
+    font-size: 4vw;
+  }
+
+  @media (max-width: 800px) {
+    font-size: 10vw;
+  }
 `;
 
 const CepForm = styled.input`
@@ -242,6 +324,7 @@ const Calculate = styled.button`
   background-color: #FFFFFF;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+  pointer-events: ${(props) => (props.isLoading ? 'none' : 'all')};
 `;
 
 const DeliveryValue = styled.p`
@@ -254,7 +337,7 @@ const ButtonForm = styled.button`
   width: 100%;
   height: 45px;
   border: none;
-  background-color: #16F948;
+  background-color: ${(props) => (props.disabled ? '#2e2f2e' : '#16F948')};
   color: #FFF;
   border-radius: 22px;
   cursor: pointer;
@@ -262,11 +345,7 @@ const ButtonForm = styled.button`
   font-size: 30px;
   font-family: 'Quicksand', sans-serif;
   margin-top: 25px;
-
-  &:disabled {
-    opacity: 60%;
-    cursor: none;
-  }
+  pointer-events: ${(props) => (props.isLoading ? 'none' : 'all')};
 `;
 
 export default Checkout;

@@ -11,7 +11,7 @@ export default function ContainerCenter({ children }) {
 
 const Main = styled.main`
   width: 100%;
-  margin: 0 10px;
+  padding: 0 10px;
 `;
 
 const Container = styled.div`
