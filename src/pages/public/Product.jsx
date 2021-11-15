@@ -40,9 +40,10 @@ export default function Product() {
     }
   }
 
-  function handleCalculateShipping() {
+  async function handleCalculateShipping() {
     setIsLoading(true);
-    // getDelivery(cep)
+    console.log(await getDelivery(cep, quantity * 0.15));
+    setIsLoading(false);
   }
 
   const handleAddCart = () => {
@@ -66,8 +67,6 @@ export default function Product() {
   if (product.length === 0) {
     return <h1>Loading</h1>;
   }
-
-  console.log(cep);
 
   return (
     <ContainerCenter>
