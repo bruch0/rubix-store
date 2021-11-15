@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link, useParams } from 'react-router-dom';
 import NumberFormat from 'react-number-format';
 import Loader from 'react-loader-spinner';
+import BuyNow from '../../components/modals/BuyNow';
 import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
 import Button from '../../components/Button';
@@ -59,6 +60,12 @@ export default function Product() {
             logout();
           }
         });
+    } else setModal('sign-in');
+  };
+
+  const handleBuyNow = () => {
+    if (user) {
+      setModal('buy-now');
     } else setModal('sign-in');
   };
 
@@ -150,7 +157,9 @@ export default function Product() {
               <ButtonAddCart onClick={handleAddCart}>
                 Adicione ao carrinho
               </ButtonAddCart>
-              <ButtonBuyNow>Comprar agora</ButtonBuyNow>
+              <ButtonBuyNow onClick={handleBuyNow}>
+                Comprar agora
+              </ButtonBuyNow>
             </>
           ) : (
             <>
@@ -175,11 +184,12 @@ export default function Product() {
           <p key={item.item}>{item.item}</p>
         ))}
       </DescriptionProduct>
+      <BuyNow id={productId} total={product.value} />
     </ContainerCenter>
   );
 }
 
-const DeliveryValue = styled.p`
+const DeliveryValue = styled.div`
   font-size: 15px;
   color: #737070;
   margin: 25px 3% 0px 3% !important;

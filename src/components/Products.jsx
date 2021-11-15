@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Loader from 'react-loader-spinner';
 import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
@@ -132,7 +133,7 @@ function Products() {
               </ProductInfo>
             </Product>
           ))
-          : ''}
+          : <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} />}
       </ProductsDisplay>
     </ProductSection>
   );
@@ -324,8 +325,9 @@ const ProductImg = styled.img`
 
 const ProductInfo = styled.div`
   display: flex;
+  position: relative;
   height: 100%;
-  min-height: 100px;
+  min-height: 130px;
   flex-direction: column;
   text-align: center;
   justify-content: center;
@@ -362,6 +364,9 @@ const Value = styled.p`
 
 const AddToCart = styled.button`
   width: 90%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   margin: 0px;
   margin-left: 5%;
   height: 0px;
