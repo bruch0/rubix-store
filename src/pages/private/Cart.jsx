@@ -21,7 +21,7 @@ export default function Cart() {
       setItems(res.data);
       setLoading(false);
     });
-  }, [renderCart, user]);
+  }, [renderCart]);
 
   if (loading) return <h1>CARREGANDO... CRIAR ALGO</h1>;
 

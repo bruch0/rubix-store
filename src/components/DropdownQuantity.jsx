@@ -25,22 +25,14 @@ export default function DropdownQuantity({
     });
   }
 
-  function handleInputQty() {
-    if (inputNewQty !== '' && isOpen) {
-      handleChangeQty(inputNewQty);
-      setInputNewQty('');
-    }
-  }
-
-  const refClickOutside = useDetectClickOutside({ onTriggered: handleInputQty });
+  const refClickOutside = useDetectClickOutside({
+    onTriggered: () => setIsOpen(false),
+  });
 
   return (
     <>
       <Dropdown ref={refClickOutside}>
-        <SelectedItem
-          isOpen={isOpen}
-          onClick={() => setIsOpen(!isOpen)}
-        >
+        <SelectedItem isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
           <QtyNumber>{quantity}</QtyNumber>
           {isOpen ? <UpArrow /> : <DownArrow />}
         </SelectedItem>
@@ -56,7 +48,15 @@ export default function DropdownQuantity({
               <InputQty
                 value={inputNewQty}
                 type="number"
-                onChange={(e) => setInputNewQty(e.target.value)}
+                min={0}
+                max={99}
+                onChange={(e) => {
+                  if (Number(e.target.value) > quantityTotal) {
+                    setInputNewQty(quantityTotal);
+                  }
+                  setInputNewQty(e.target.value);
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleChangeQty(inputNewQty)}
               />
               {inputNewQty > quantityTotal && (
                 <NotAvailableText>Não disponível</NotAvailableText>
@@ -84,8 +84,8 @@ const InputQty = styled(InputForm)`
   height: 30px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 5px 0;
+  padding: 10px;
   &:valid {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   }
