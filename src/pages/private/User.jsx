@@ -11,8 +11,6 @@ export default function User() {
   const [userInfo, setUserInfo] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
-
   const { user } = useAuth();
 
   useEffect(() => {

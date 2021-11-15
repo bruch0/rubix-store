@@ -22,6 +22,7 @@ export default function Product() {
   const [indexImage, setIndexImage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [shippingCost, setShippingCost] = useState(null);
   const [cep, setCep] = useState('');
 
   const { user, logout } = useAuth();
@@ -42,7 +43,8 @@ export default function Product() {
 
   async function handleCalculateShipping() {
     setIsLoading(true);
-    console.log(await getDelivery(cep, quantity * 0.15));
+    if (cep.length !== 8) throwError('CEP Inválido!');
+    setShippingCost(await getDelivery(cep, quantity * 0.15));
     setIsLoading(false);
   }
 
@@ -135,6 +137,15 @@ export default function Product() {
                     )}
                   </ButtonShippingCost>
                 </FieldShippingContainer>
+                <DeliveryValue>
+                  {shippingCost && (
+                    <p>
+                      SEDEX - 6 dias úteis -
+                      {' '}
+                      <span>{convertToBRL(shippingCost)}</span>
+                    </p>
+                  )}
+                </DeliveryValue>
               </ShippingCostContainer>
               <ButtonAddCart onClick={handleAddCart}>
                 Adicione ao carrinho
@@ -167,6 +178,12 @@ export default function Product() {
     </ContainerCenter>
   );
 }
+
+const DeliveryValue = styled.p`
+  font-size: 15px;
+  color: #737070;
+  margin: 25px 3% 0px 3% !important;
+`;
 
 const InputShippingCost = styled(InputForm)`
   background-color: #fff;
