@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { calcularPrecoPrazo } from 'correios-brasil';
 import { Link, useParams } from 'react-router-dom';
 import Loader from 'react-loader-spinner';
 import InputForm from '../../components/InputForm';
@@ -25,18 +24,6 @@ export default function Product() {
 
   const { id: productId } = useParams();
 
-  const senderInfo = {
-    sCepOrigem: '20550110',
-    sCepDestino: null,
-    nVlPeso: '0.2',
-    nCdFormato: '1',
-    nVlComprimento: '17',
-    nVlAltura: '8',
-    nVlLargura: '11',
-    nCdServico: ['04014', '04510'],
-    nVlDiametro: '0',
-  };
-
   function controlPicture(n) {
     if (indexImage === 0 && n === -1) {
       setIndexImage(product.images.length - 1);
@@ -49,7 +36,6 @@ export default function Product() {
 
   function handleCalculateShipping() {
     setIsLoading(true);
-    senderInfo.sCepDestino = cep;
     calcularPrecoPrazo(senderInfo)
       .then(() => {
         setIsLoading(false);
