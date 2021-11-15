@@ -26,10 +26,12 @@ const throwSuccess = (title) => (
 );
 
 const getDelivery = (setDelivery, cepDestino, peso) => {
-  axios.get(`https://cors-anywhere.herokuapp.com/http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?sCepOrigem=88111225&sCepDestino=${cepDestino}&nVlPeso=${peso}&nCdFormato=1&nVlComprimento=20&nVlAltura=20&nVlLargura=20&nVlDiametro=0&nCdServico=04014&nCdEmpresa=&sDsSenha=&sCdMaoPropria=n&nVlValorDeclarado=0&sCdAvisoRecebimento=n&StrRetorno=xml&nIndicaCalculo=1`)
+  axios.get(`https://cors-anywhere.herokuapp.com/http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?sCepOrigem=20550110&sCepDestino=${cepDestino}&nVlPeso=${peso}&nCdFormato=1&nVlComprimento=20&nVlAltura=10&nVlLargura=17&nVlDiametro=0&nCdServico=04014&nCdEmpresa=&sDsSenha=&sCdMaoPropria=n&nVlValorDeclarado=0&sCdAvisoRecebimento=n&StrRetorno=xml&nIndicaCalculo=1`)
     .then((res) => {
       const xml = res.data;
-      parseString(xml, (err, result) => setDelivery(Number(result.Servicos.cServico[0].Valor[0].replace(',', '.') * 100)));
+      parseString(xml, (err, result) => setDelivery(
+        Number(result.Servicos.cServico[0].Valor[0].replace(',', '.') * 100),
+      ));
     });
 };
 

@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Swal from 'sweetalert2';
 import { DebounceInput } from 'react-debounce-input';
 import searchIcon from '../assets/icons/search.png';
 import filterIcon from '../assets/icons/filter.png';
 import { api, postCart } from '../services/api';
-import { convertToBRL } from '../services/utils';
+import { convertToBRL, throwError, throwSuccess } from '../services/utils';
 import { useAuth } from '../contexts/AuthContext';
 import ModalContext from '../contexts/ModalContext';
 
@@ -46,15 +45,17 @@ function Products() {
     setTimeout(() => setFilterDropdown(false), 110);
   };
 
-  const handleAddCart = (e, productId) => {
-    e.stopPropagation();
+  const handleAddCart = (productId) => {
     if (user) {
       postCart(productId, 1, user.token)
-        .then(() => Swal.fire({
-          icon: 'success',
-          confirmButtonColor: '#1382e9',
-          text: 'Adicionado!',
-        })).catch(() => logout());
+        .then(() => throwSuccess('Adicionado!'))
+        .catch((error) => {
+          if (error.response.status === 400) {
+            throwError('Quantidade maxima atingida.');
+          } else if (error.response.status === 401) {
+            logout();
+          }
+        });
     } else setModal('sign-in');
   };
 
@@ -123,7 +124,7 @@ function Products() {
                     <Value>
                       {convertToBRL(product.value)}
                     </Value>
-                    <AddToCart onClick={(e) => handleAddCart(e, product.id)}>
+                    <AddToCart onClick={() => handleAddCart(product.id)}>
                       Adicionar ao carrinho
                     </AddToCart>
                   </>

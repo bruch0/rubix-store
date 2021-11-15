@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import { getDelivery } from '../../services/utils.js';
-import { getCart, buyCart } from '../../services/api.js';
+import { getCartCheckout, buyCartCheckout } from '../../services/api.js';
 import { useAuth } from '../../contexts/AuthContext';
 import deliveryLogo from '../../assets/icons/delivery.png';
 
@@ -26,7 +26,7 @@ function Checkout() {
 
   useEffect(() => {
     if (user) {
-      getCart(user.userId)
+      getCartCheckout(user.userId)
         .then((response) => {
           setCart(response.data.cart);
           setTotal(response.data.subTotal);
@@ -82,7 +82,7 @@ function Checkout() {
               <ButtonForm
                 onClick={() => {
                   setLoading(true);
-                  buyCart(user.userId, total + delivery, cart)
+                  buyCartCheckout(user.userId, total + delivery, cart)
                     .then(() => Swal.fire({
                       icon: 'success',
                       confirmButtonColor: '#1382e9',

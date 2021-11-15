@@ -2,20 +2,14 @@
 import React, {
   createContext,
   useContext,
-  useEffect,
   useState,
 } from 'react';
 
 const AuthContext = createContext({});
 
 const AuthProvider = (props) => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const userLocal = localStorage.getItem('user');
-    if (!userLocal) return;
-    setUser(JSON.parse(userLocal));
-  }, []);
+  const userLocal = localStorage.getItem('user');
+  const [user, setUser] = useState(JSON.parse(userLocal));
 
   const logout = () => {
     setUser(null);
@@ -27,7 +21,6 @@ const AuthProvider = (props) => {
     logout,
     user,
   };
-
   return <AuthContext.Provider value={authContextValue} {...props} />;
 };
 
