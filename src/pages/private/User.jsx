@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import NumberFormat from 'react-number-format';
 import { getUserInfo } from '../../services/api';
@@ -14,17 +13,15 @@ export default function User() {
   const { user } = useAuth();
 
   useEffect(() => {
-    console.log(user);
     getUserInfo(user.token)
       .then((res) => {
         setUserInfo(res.data);
-        console.log(res.data);
       })
       .catch((err) => console.log(err));
   }, []);
 
-  if (loading) return <h1>CARREGANDO... CRIAR ALGO</h1>;
-
+  if (userInfo.length === 0) return <h1>CARREGANDO... CRIAR ALGO</h1>;
+  console.log(userInfo);
   return (
     <ContainerCenter>
       <SectionTitle>Meus dados</SectionTitle>
@@ -60,7 +57,7 @@ export default function User() {
       </PersonalInfoContainer>
       <SectionTitle>Meus pedidos</SectionTitle>
       {userInfo.purchases?.map((purchase) => (
-        <PurchasesDropdown key={purchase.id} purchase={purchase} />
+        <PurchasesDropdown key={Math.random()} purchase={purchase} />
       ))}
     </ContainerCenter>
   );

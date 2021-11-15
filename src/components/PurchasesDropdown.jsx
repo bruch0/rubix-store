@@ -4,7 +4,6 @@ import { convertToBRL } from '../services/utils';
 
 export default function PurchasesDropdown({ purchase }) {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <DropdownContainer>
       {isOpen || (
@@ -35,8 +34,8 @@ export default function PurchasesDropdown({ purchase }) {
             <ColumnValue>Valor</ColumnValue>
           </HeaderListItem>
           {purchase.bought_products.map((item) => (
-            <>
-              <ListItem key={item.product_id}>
+            <MainContainerItem key={item.id}>
+              <ListItem>
                 <ColumnImage>
                   <img src={item.imageUrl} alt={item.name} />
                 </ColumnImage>
@@ -44,7 +43,7 @@ export default function PurchasesDropdown({ purchase }) {
                 <ColumnQuantity>{item.qty}</ColumnQuantity>
                 <ColumnValueBlue>{convertToBRL(item.value)}</ColumnValueBlue>
               </ListItem>
-              <ListItemMobile key={item.product_id}>
+              <ListItemMobile>
                 <ColumnImage>
                   <img src={item.imageUrl} alt={item.name} />
                 </ColumnImage>
@@ -60,7 +59,7 @@ export default function PurchasesDropdown({ purchase }) {
                   </ColumnValueBlue>
                 </InfoQtyValueContainer>
               </ListItemMobile>
-            </>
+            </MainContainerItem>
           ))}
           <ListItemLast>
             <ColumnValue>Total</ColumnValue>
@@ -73,6 +72,8 @@ export default function PurchasesDropdown({ purchase }) {
     </DropdownContainer>
   );
 }
+const MainContainerItem = styled.div`
+`;
 
 const InfoQtyValueContainer = styled.div`
   display: flex;
