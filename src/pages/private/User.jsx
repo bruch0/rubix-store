@@ -50,7 +50,10 @@ export default function User() {
       </PersonalInfoContainer>
       <SectionTitle>Meus pedidos</SectionTitle>
       {userInfo.purchases?.map((purchase) => (
-        <PurchasesDropdown key={purchase.id} purchase={purchase} />
+        <PurchasesDropdown
+          key={purchase.id}
+          purchase={purchase}
+        />
       ))}
     </ContainerCenter>
   );
