@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { getUserInfo } from '../../services/api';
-import { convertToBRL } from '../../services/utils.js';
 import ContainerCenter from '../../components/ContainerCenter';
 import { useAuth } from '../../contexts/AuthContext';
+import PurchasesDropdown from '../../components/PurchasesDropdown';
 
 export default function User() {
   const [userInfo, setUserInfo] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const { user } = useAuth();
@@ -25,10 +27,6 @@ export default function User() {
 
   if (loading) return <h1>CARREGANDO... CRIAR ALGO</h1>;
 
-  const ToPhoneString = (value) => `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 12)}`;
-
-  const ToCpfString = (value) => `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9, 12)}`;
-
   return (
     <ContainerCenter>
       <SectionTitle>Meus dados</SectionTitle>
@@ -39,11 +37,11 @@ export default function User() {
         </InfoContainer>
         <InfoContainer>
           <InfoTitle>CPF</InfoTitle>
-          <InfoInput width="200px">{ToCpfString(userInfo.cpf)}</InfoInput>
+          <InfoInput width="200px">{userInfo.cpf}</InfoInput>
         </InfoContainer>
         <InfoContainer>
           <InfoTitle>Telefone</InfoTitle>
-          <InfoInput width="200px">{ToPhoneString(userInfo.phone)}</InfoInput>
+          <InfoInput width="200px">{userInfo.phone}</InfoInput>
         </InfoContainer>
         <InfoContainer>
           <InfoTitle>E-mail</InfoTitle>
@@ -51,6 +49,9 @@ export default function User() {
         </InfoContainer>
       </PersonalInfoContainer>
       <SectionTitle>Meus pedidos</SectionTitle>
+      {userInfo.purchases?.map((purchase) => (
+        <PurchasesDropdown key={purchase.id} purchase={purchase} />
+      ))}
     </ContainerCenter>
   );
 }

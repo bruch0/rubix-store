@@ -50,7 +50,9 @@ const getCartCheckout = (userId) => api.post('/checkout', { userId });
 const buyCartCheckout = (userId, totalValue, cart) => api.post('/buy-checkout', { userId, totalValue, cart });
 
 const getUserInfo = (token) => api.get('/user', getConfig(token));
+const ToPhoneString = (value) => (`(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 12)}`);
 
+const ToCpfString = (value) => `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9, 12)}`;
 export {
   api,
   postSignIn,
