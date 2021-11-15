@@ -22,85 +22,86 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-
 	<script>
-		const cube = `
-		<div id="centro">
-			<div class="cena" id="cena">
-				<div class="d6" id="d6">
-					<div class="face nao-selecionavel primeira">
-						<img draggable="false" class="cube-img" src='Assets/Banner/1.svg'>
-					</div>
-					<div class="face nao-selecionavel segunda">
-						<img draggable="false" class="cube-img" src='Assets/Banner/2.svg'>
-					</div>
-					<div class="face nao-selecionavel terceira">
-						<img draggable="false" class="cube-img" src='Assets/Banner/3.svg'>
-					</div>
-					<div class="face nao-selecionavel quarta">
-						<img draggable="false" class="cube-img" src='Assets/Banner/4.svg'>
-					</div>
-					<div class="face nao-selecionavel quinta">
-						<img draggable="false" class="cube-img" src='Assets/Banner/5.svg'>
-					</div>
-					<div class="face nao-selecionavel sexta">
-						<img draggable="false" class="cube-img" src='Assets/Banner/6.svg'>
-					</div>
-				</div>
-			</div>
-			<p class="title nao-selecionavel">A maior loja de cubos da<br> América Latina</p>
-		</div>`
+		function eventListenersOnBanner() {
+			const allElements = Array.prototype.slice.call(document.querySelectorAll('#banner'));
+			allElements.push(document);
+			allElements.push(window);
+
+			const types = [];
+
+			for (let ev in window) {
+				if (/^on/.test(ev)) types[types.length] = ev;
+			}
+
+			let elements = [];
+			for (let i = 0; i < allElements.length; i++) {
+				const currentElement = allElements[i];
+				for (let j = 0; j < types.length; j++) {
+				if (typeof currentElement[types[j]] === 'function') {
+					elements.push({
+					"node": currentElement,
+					"type": types[j],
+					"func": currentElement[types[j]].toString(),
+					});
+				}
+				}
+			}
+
+			return elements.sort(function(a,b) {
+				return a.type.localeCompare(b.type);
+			});
+		}
 	</script>
 	<script>
 		let drag = 0
 		let interval
+		let interval2
 		let rotateX = 0
 		let rotateY = 0
-			
-		const insertCube = () => {
-			const banner = document.querySelector('#banner');
-			banner.innerHTML = cube;
-		}
 
 		const move = () => {
 			rotateY += 1;
 			rotateX += 1;
 			d6.style.transform = "rotateX(" + rotateY + "deg) rotateY(" + rotateX + "deg) "
 		}
-		
-		window.onmousedown = function () {
-			drag = 1
-			clearInterval(interval)
-		}
 
-		window.onmouseup = function () {
-			drag = 0
-			start()
-		}
+		const addListener = () => {
+			const banner = document.querySelector('#banner');
+			banner.onmousedown = function () {
+				drag = 1
+				clearInterval(interval)
+			}
+	
+			banner.onmouseup = function () {
+				drag = 0
+				start()
+			}
 
-		window.onmousemove = function (e) {
-			if (drag && d6) {
-				x = e.movementX
-				y = e.movementY
-				rotateX += x
-				rotateY += y * -1
-				d6.style.transform = "rotateX(" + rotateY + "deg) rotateY(" + rotateX + "deg) "
+			banner.onmousemove = function (e) {
+				if (drag && d6) {
+					x = e.movementX
+					y = e.movementY
+					rotateX += x
+					rotateY += y * -1
+					d6.style.transform = "rotateX(" + rotateY + "deg) rotateY(" + rotateX + "deg) "
+				}
 			}
 		}
-
 	</script>
 	<script>
 		const checkUrl = () => {
 			const url = window.location.href.split('/')[3]
 			if (url === '') {
-				if (banner.innerHTML === '') {
-					insertCube()
+				const test = eventListenersOnBanner();
+				if (test.length === 0) {
+					addListener();
 				}
 				move()
+			} else {
+				rotateX = 0;
+				rotateY = 0;
 			}
-			else (
-				clearInterval(interval)
-			)
 		}
 
 		const start = () => {
