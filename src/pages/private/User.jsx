@@ -5,9 +5,11 @@ import { getUserInfo } from '../../services/api';
 import ContainerCenter from '../../components/ContainerCenter';
 import { useAuth } from '../../contexts/AuthContext';
 import PurchasesDropdown from '../../components/PurchasesDropdown';
+import Loading from '../../components/Loading';
 
 export default function User() {
   const [userInfo, setUserInfo] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const { user } = useAuth();
 
@@ -15,10 +17,13 @@ export default function User() {
     getUserInfo(user.token)
       .then((res) => {
         setUserInfo(res.data);
+        setTimeout(() => setLoading(false), 1000);
       });
   }, []);
 
-  if (userInfo.length === 0) return <h1>CARREGANDO... CRIAR ALGO</h1>;
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <ContainerCenter>

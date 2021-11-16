@@ -1,20 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ReactComponent as LoadingIcon } from '../assets/loading/loading.svg';
 
-export default function ContainerCenter({ children }) {
+export default function Loading() {
   return (
     <Main>
-      <Container>{children}</Container>
+      <BigLoading />
     </Main>
   );
 }
 
-const Main = styled.main`
-  width: 100%;
-  padding: 0 10px;
+const BigLoading = styled(LoadingIcon)`
+  width: 15%;
 `;
 
-const Container = styled.div`
-  max-width: 900px;
-  margin: 130px auto;
+const Main = styled.main`
+  padding-top: min(300px, 30vh);
+  display: flex;
 `;
