@@ -93,13 +93,9 @@ export default function BuyNow({ total, id }) {
             </Calculate>
           </div>
           <DeliveryValue>
-            {delivery && (
-            <p>
-              SEDEX - 6 dias úteis -
-              {' '}
-              <span>{convertToBRL(delivery)}</span>
-            </p>
-            )}
+            {delivery ? (
+              `SEDEX - 6 dias úteis - ${convertToBRL(delivery)}`
+            ) : ''}
           </DeliveryValue>
           <ButtonForm onClick={quickBuy} disabled={cep.length < 8 || !delivery}>
 
