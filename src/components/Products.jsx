@@ -9,11 +9,13 @@ import { api, postCart } from '../services/api';
 import { convertToBRL, throwError, throwSuccess } from '../services/utils';
 import { useAuth } from '../contexts/AuthContext';
 import ModalContext from '../contexts/ModalContext';
+import Loading from './Loading';
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [filterDropdown, setFilterDropdown] = useState(false);
   const [order, setOrder] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [productSearch, setProductSearch] = useState('');
   const { search } = useLocation();
 
@@ -37,9 +39,10 @@ function Products() {
       query = `?search=${productSearch}`;
     }
 
-    api
-      .get(`/products${category || query ? query : ''}`)
-      .then((response) => setProducts(response.data));
+    api.get(`/products${category || query ? query : ''}`).then((response) => {
+      setProducts(response.data);
+      setTimeout(() => setLoading(false), 1000);
+    });
   }, [category, order, productSearch]);
 
   const handleClickOutside = () => {
@@ -62,81 +65,92 @@ function Products() {
 
   return (
     <ProductSection>
-      <Title>Produtos</Title>
-      <Search>
-        <SearchBar
-          placeholder="Pesquise aqui"
-          minLength={2}
-          debounceTimeout={100}
-          value={productSearch}
-          onChange={(event) => setProductSearch(event.target.value)}
-        />
-        <SearchButton>
-          <img src={searchIcon} alt="Pesquisar" />
-        </SearchButton>
-        <FilterButton
-          onBlur={handleClickOutside}
-          onClick={() => {
-            if (!filterDropdown) {
-              setFilterDropdown(true);
-            }
-          }}
-        >
-          <img src={filterIcon} alt="Filtrar" />
-          <span>Filtro</span>
-        </FilterButton>
-        <Dropdown>
-          <DropdownContent enabled={filterDropdown ? 1 : 0}>
-            <DropwdownOption
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <Title>Produtos</Title>
+          <Search>
+            <SearchBar
+              placeholder="Pesquise aqui"
+              minLength={2}
+              debounceTimeout={100}
+              value={productSearch}
+              onChange={(event) => setProductSearch(event.target.value)}
+            />
+            <SearchButton>
+              <img src={searchIcon} alt="Pesquisar" />
+            </SearchButton>
+            <FilterButton
+              onBlur={handleClickOutside}
               onClick={() => {
-                setOrder('price');
-                setFilterDropdown(false);
+                if (!filterDropdown) {
+                  setFilterDropdown(true);
+                }
               }}
             >
-              Maior preço
-            </DropwdownOption>
+              <img src={filterIcon} alt="Filtrar" />
+              <span>Filtro</span>
+            </FilterButton>
+            <Dropdown>
+              <DropdownContent enabled={filterDropdown ? 1 : 0}>
+                <DropwdownOption
+                  onClick={() => {
+                    setOrder('price');
+                    setFilterDropdown(false);
+                  }}
+                >
+                  Maior preço
+                </DropwdownOption>
 
-            <DropwdownOption
-              onClick={() => {
-                setOrder('-price');
-                setFilterDropdown(false);
-              }}
-            >
-              Menor preço
-            </DropwdownOption>
-          </DropdownContent>
-        </Dropdown>
-      </Search>
+                <DropwdownOption
+                  onClick={() => {
+                    setOrder('-price');
+                    setFilterDropdown(false);
+                  }}
+                >
+                  Menor preço
+                </DropwdownOption>
+              </DropdownContent>
+            </Dropdown>
+          </Search>
 
-      <ProductsDisplay>
-        {products.length > 0 ? (
-          products.map((product) => (
-            <Product key={product.id}>
-              <ImageContainer>
-                <ProductImg
-                  onClick={() => navigate(`/product/${product.id}`)}
-                  src={product.imageUrl}
-                />
-              </ImageContainer>
-              <ProductInfo>
-                {product.total_qty <= 0 ? (
-                  <SoldOff>Esgotado</SoldOff>
-                ) : (
-                  <>
-                    <Name>{product.name}</Name>
-                    <Value>{convertToBRL(product.value)}</Value>
-                    <AddToCart onClick={() => handleAddCart(product.id)}>
-                      Adicionar ao carrinho
-                    </AddToCart>
-                  </>
-                )}
-              </ProductInfo>
-            </Product>
-          ))
-        ) : (
-          <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} />
-        )}
-      </ProductsDisplay>
+          <ProductsDisplay>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <Product key={product.id}>
+                  <ImageContainer>
+                    <ProductImg
+                      onClick={() => navigate(`/product/${product.id}`)}
+                      src={product.imageUrl}
+                    />
+                  </ImageContainer>
+                  <ProductInfo>
+                    {product.total_qty <= 0 ? (
+                      <SoldOff>Esgotado</SoldOff>
+                    ) : (
+                      <>
+                        <Name>{product.name}</Name>
+                        <Value>{convertToBRL(product.value)}</Value>
+                        <AddToCart onClick={() => handleAddCart(product.id)}>
+                          Adicionar ao carrinho
+                        </AddToCart>
+                      </>
+                    )}
+                  </ProductInfo>
+                </Product>
+              ))
+            ) : (
+              <Loader
+                type="ThreeDots"
+                color="#FFFFFF"
+                height={25}
+                width={100}
+              />
+            )}
+          </ProductsDisplay>
+        </>
+      )}
     </ProductSection>
   );
 }
