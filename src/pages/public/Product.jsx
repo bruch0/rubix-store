@@ -17,11 +17,13 @@ import {
   throwSuccess,
   getDelivery,
 } from '../../services/utils';
+import Loading from '../../components/Loading';
 
 export default function Product() {
   const [product, setProduct] = useState([]);
   const [indexImage, setIndexImage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [shippingCost, setShippingCost] = useState(null);
   const [cep, setCep] = useState('');
@@ -70,12 +72,14 @@ export default function Product() {
   };
 
   useEffect(() => {
-    getProduct(productId).then((res) => setProduct(res.data));
+    getProduct(productId)
+      .then((res) => {
+        setProduct(res.data);
+        setTimeout(() => setLoading(false), 1000);
+      });
   }, []);
 
-  if (product.length === 0) {
-    return <h1>Loading</h1>;
-  }
+  if (loading) return <Loading />;
 
   return (
     <ContainerCenter>

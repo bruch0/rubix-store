@@ -7,6 +7,7 @@ import ContainerCenter from '../../components/ContainerCenter';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/Button';
 import DropdownQuantity from '../../components/DropdownQuantity';
+import Loading from '../../components/Loading';
 
 export default function Cart() {
   const [items, setItems] = useState([]);
@@ -19,11 +20,11 @@ export default function Cart() {
   useEffect(() => {
     getCart(user?.token).then((res) => {
       setItems(res.data);
-      setLoading(false);
+      setTimeout(() => setLoading(false), 1000);
     });
   }, [renderCart]);
 
-  if (loading) return <h1>CARREGANDO... CRIAR ALGO</h1>;
+  if (loading) return <Loading />;
 
   if (items.length === 0) {
     return (

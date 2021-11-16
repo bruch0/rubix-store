@@ -14,6 +14,7 @@ import { getCartCheckout, buyCartCheckout } from '../../services/api.js';
 import { useAuth } from '../../contexts/AuthContext';
 import deliveryLogo from '../../assets/icons/delivery.png';
 import InputForm from '../../components/InputForm';
+import Loading from '../../components/Loading.jsx';
 
 function Checkout() {
   const [cart, setCart] = useState(null);
@@ -22,6 +23,7 @@ function Checkout() {
   const [delivery, setDelivery] = useState(null);
   const [cep, setCep] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -30,6 +32,7 @@ function Checkout() {
         setCart(response.data.cart);
         setTotal(response.data.subTotal);
         setWeight(response.data.totalWeight);
+        setTimeout(() => setIsLoading(false), 1000);
       });
     }
   }, [user]);
@@ -40,6 +43,8 @@ function Checkout() {
     setDelivery(await getDelivery(cep, (weight / 1000)));
     setLoading(false);
   }
+
+  if (isLoading) return <Loading />;
 
   return (
     <CheckoutPage isLoading={loading && cart === null ? 1 : 0}>
