@@ -322,7 +322,7 @@ const ContainerProduct = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  @media (max-width: 852px) {
+  @media (max-width: 900px) {
     flex-direction: column;
     align-items: center;
   }
@@ -337,6 +337,10 @@ const Sidebar = styled.div`
   border-radius: 22px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 const ArrowPassPrev = styled.div`
@@ -382,9 +386,9 @@ const ContainerPictureShow = styled.div`
   height: 500px;
   position: relative;
   margin-bottom: 15px;
-  @media (max-width: 400px) {
+  @media (max-width: 500px) {
     height: 300px;
-    min-width: 350px;
+    width: 100%
   }
 `;
 

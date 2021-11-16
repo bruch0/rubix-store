@@ -304,6 +304,7 @@ const ProductsDisplay = styled.div`
 
   @media (max-width: 400px) {
     grid-template-columns: repeat(1, 1fr);
+    gap: 3%;
   }
 `;
 

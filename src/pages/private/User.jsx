@@ -55,7 +55,7 @@ export default function User() {
       </PersonalInfoContainer>
       <SectionTitle>Meus pedidos</SectionTitle>
       {userInfo.purchases?.map((purchase) => (
-        <PurchasesDropdown key={Math.random()} purchase={purchase} />
+        <PurchasesDropdown key={purchase.id} purchase={purchase} />
       ))}
     </ContainerCenter>
   );
@@ -70,8 +70,14 @@ const InfoInput = styled.div`
   padding: 6px 20px;
   font-size: 20px;
   margin-right: 10px;
-  @media (max-width: 430px) {
+  @media (max-width: 450px) {
     max-width: 300px;
+  }
+
+  @media (max-width: 350px) {
+    max-width: 95%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 
@@ -86,6 +92,7 @@ const InfoContainer = styled.div`
   flex-direction: column;
   margin-bottom: 10px;
   width: auto;
+  min-width: 50%;
 `;
 
 const SectionTitle = styled.h1`
