@@ -1,11 +1,16 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-undef */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable no-restricted-globals */
 import React, { useContext, useState } from 'react';
 import Popup from 'reactjs-popup';
 import styled from 'styled-components';
 import Loader from 'react-loader-spinner';
+import NumberFormat from 'react-number-format';
 import { buyCartCheckout } from '../../services/api.js';
-import { getDelivery, throwError, throwSuccess } from '../../services/utils.js';
+import {
+  convertToBRL, getDelivery, throwError, throwSuccess,
+} from '../../services/utils.js';
 import Logo from '../Logo';
 import StoreName from '../StoreName';
 import { useAuth } from '../../contexts/AuthContext';
@@ -13,6 +18,7 @@ import deliveryLogo from '../../assets/icons/delivery.png';
 import '../../shared/styles/modal.css';
 import { ReactComponent as CloseIcon } from '../../assets/icons/close.svg';
 import ModalContext from '../../contexts/ModalContext';
+import InputForm from '../InputForm';
 
 export default function BuyNow({ total, id }) {
   const [cep, setCep] = useState('');
@@ -20,12 +26,6 @@ export default function BuyNow({ total, id }) {
   const [loading, setLoading] = useState(false);
   const { modal, setModal } = useContext(ModalContext);
   const { user } = useAuth();
-
-  const currencyFormat = {
-    minimumFractionDigits: 2,
-    style: 'currency',
-    currency: 'BRL',
-  };
 
   const cart = [
     {
@@ -41,7 +41,7 @@ export default function BuyNow({ total, id }) {
       return;
     }
     setLoading(true);
-    buyCartCheckout(user.userId, total + delivery, cart)
+    buyCartCheckout(total + delivery, cart, user.token)
       .then(() => {
         throwSuccess('Compra realizada');
         setModal(null);
@@ -56,6 +56,13 @@ export default function BuyNow({ total, id }) {
       });
   }
 
+  async function handleCalculateShipping() {
+    setLoading(true);
+    if (cep.length !== 8) throwError('CEP Inválido!');
+    setDelivery(await getDelivery(cep, '0.2'));
+    setLoading(false);
+  }
+
   return (
     <Popup open={modal === 'buy-now'} modal closeOnDocumentClick={false}>
       <ContainerQuickBuy>
@@ -67,21 +74,18 @@ export default function BuyNow({ total, id }) {
           <StoreName />
         </div>
         <Total>
-          <Value>{((total + delivery) / 100).toLocaleString('pt-BR', currencyFormat)}</Value>
+          <Value>{convertToBRL(total + delivery)}</Value>
           <p>Calcular frete e prazo</p>
           <div>
-            <CepForm
-              maxLength={9}
+            <NumberFormat
+              customInput={InputShippingCost}
               value={cep}
-              onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
+              format="#####-###"
+              onValueChange={({ value }) => setCep(value)}
             />
             <Calculate
               isLoading={loading ? 1 : 0}
-              onClick={() => {
-                setLoading(true);
-                getDelivery(setDelivery, cep, '0.2');
-                setTimeout(() => setLoading(false), 1000);
-              }}
+              onClick={() => handleCalculateShipping()}
             >
               {loading
                 ? <Loader type="TailSpin" color="#000" height={25} width={30} />
@@ -89,9 +93,15 @@ export default function BuyNow({ total, id }) {
             </Calculate>
           </div>
           <DeliveryValue>
-            {delivery !== 0 ? `SEDEX - 6 dias úteis - R$ ${(delivery / 100).toFixed(2).replace('.', ',')}` : ''}
+            {delivery && (
+            <p>
+              SEDEX - 6 dias úteis -
+              {' '}
+              <span>{convertToBRL(delivery)}</span>
+            </p>
+            )}
           </DeliveryValue>
-          <ButtonForm onClick={quickBuy} disabled={(cep.length === 9 && delivery !== 0) ? 0 : 1}>
+          <ButtonForm onClick={quickBuy} disabled={cep.length < 8 || !delivery}>
 
             {loading ? <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} /> : 'Comprar'}
           </ButtonForm>
@@ -100,6 +110,16 @@ export default function BuyNow({ total, id }) {
     </Popup>
   );
 }
+
+const InputShippingCost = styled(InputForm)`
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25) !important;
+  width: 72%;
+  margin-bottom: 0;
+  @media (max-width: 350px) {
+    border-radius: 24px;
+  }
+`;
 
 const ContainerQuickBuy = styled.div`
   position: relative;
@@ -202,21 +222,6 @@ const Value = styled.div`
   }
 `;
 
-const CepForm = styled.input`
-  font-family: 'Quicksand', sans-serif;
-  outline: none;
-  height: 35px;
-  width: 70%;
-  background-color: #FFFFFF;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 22px;
-  border: 0px;
-  margin: 0px;
-  padding-left: 20px;
-  font-size: 18px;
-  font-weight: 500;
-`;
-
 const Calculate = styled.button`
   width: 20%;
   border: 0px;
@@ -231,6 +236,9 @@ const DeliveryValue = styled.p`
   font-size: 15px;
   color: #737070;
   margin: 25px 3% 0px 3% !important;
+  span {
+    font-weight: bold;
+  }
 `;
 
 const ButtonForm = styled.button`

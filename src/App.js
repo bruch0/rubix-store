@@ -15,6 +15,7 @@ import ModalContext from './contexts/ModalContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import RecoverPassword from './pages/public/RecoverPassword';
 import Cart from './pages/private/Cart';
+import User from './pages/private/User';
 
 function App() {
   const [modal, setModal] = useState(null);
@@ -41,6 +42,10 @@ function App() {
             <Route
               path="/checkout"
               element={(<PrivateRoute><Checkout /></PrivateRoute>)}
+            />
+            <Route
+              path="/user"
+              element={(<PrivateRoute><User /></PrivateRoute>)}
             />
           </Routes>
         </ModalContext.Provider>

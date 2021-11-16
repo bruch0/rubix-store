@@ -45,10 +45,11 @@ const authorizeRecover = (token) => api.post('/authorize-password', { token });
 
 const changePassword = (email, newPassword) => api.post('/change-password', { email, newPassword });
 
-const getCartCheckout = (userId) => api.post('/checkout', { userId });
+const getCartCheckout = (token) => api.get('/checkout', getConfig(token));
 
-const buyCartCheckout = (userId, totalValue, cart) => api.post('/buy-checkout', { userId, totalValue, cart });
+const buyCartCheckout = (totalValue, cart, token) => api.post('/buy-checkout', { totalValue, cart }, getConfig(token));
 
+const getUserInfo = (token) => api.get('/user', getConfig(token));
 export {
   api,
   postSignIn,
@@ -61,4 +62,5 @@ export {
   changePassword,
   getCartCheckout,
   buyCartCheckout,
+  getUserInfo,
 };

@@ -1,23 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { calcularPrecoPrazo } from 'correios-brasil';
 import { Link, useParams } from 'react-router-dom';
+import NumberFormat from 'react-number-format';
 import Loader from 'react-loader-spinner';
 import BuyNow from '../../components/modals/BuyNow';
 import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
 import Button from '../../components/Button';
 import { getProduct, postCart } from '../../services/api';
-import { convertToBRL, throwError, throwSuccess } from '../../services/utils';
 import { useAuth } from '../../contexts/AuthContext';
 import ModalContext from '../../contexts/ModalContext';
 import ContainerCenter from '../../components/ContainerCenter';
+import {
+  convertToBRL,
+  throwError,
+  throwSuccess,
+  getDelivery,
+} from '../../services/utils';
 
 export default function Product() {
   const [product, setProduct] = useState([]);
   const [indexImage, setIndexImage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [shippingCost, setShippingCost] = useState(null);
   const [cep, setCep] = useState('');
 
   const { user, logout } = useAuth();
@@ -25,18 +31,6 @@ export default function Product() {
   const { setModal } = useContext(ModalContext);
 
   const { id: productId } = useParams();
-
-  const senderInfo = {
-    sCepOrigem: '88111225',
-    sCepDestino: null,
-    nVlPeso: '0.2',
-    nCdFormato: '1',
-    nVlComprimento: '17',
-    nVlAltura: '8',
-    nVlLargura: '11',
-    nCdServico: ['04014', '04510'],
-    nVlDiametro: '0',
-  };
 
   function controlPicture(n) {
     if (indexImage === 0 && n === -1) {
@@ -48,16 +42,11 @@ export default function Product() {
     }
   }
 
-  function handleCalculateShipping() {
+  async function handleCalculateShipping() {
     setIsLoading(true);
-    senderInfo.sCepDestino = cep;
-    calcularPrecoPrazo(senderInfo)
-      .then(() => {
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        throwError(err);
-      });
+    if (cep.length !== 8) throwError('CEP Inválido!');
+    setShippingCost(await getDelivery(cep, quantity * 0.15));
+    setIsLoading(false);
   }
 
   const handleAddCart = () => {
@@ -81,8 +70,7 @@ export default function Product() {
   };
 
   useEffect(() => {
-    getProduct(productId)
-      .then((res) => setProduct(res.data));
+    getProduct(productId).then((res) => setProduct(res.data));
   }, []);
 
   if (product.length === 0) {
@@ -98,12 +86,12 @@ export default function Product() {
           {product.categoryName}
         </TopLink>
       </ContainerTopLinks>
-      <TitleProduct>
-        {product.name}
-      </TitleProduct>
+      <TitleProduct>{product.name}</TitleProduct>
       <ContainerProduct>
         <ContainerPictureShow>
-          <PictureNumberText>{`${indexImage + 1}/${product.images.length}`}</PictureNumberText>
+          <PictureNumberText>
+            {`${indexImage + 1}/${product.images.length}`}
+          </PictureNumberText>
           <Picture src={product.images[indexImage].url} alt="Imagem" />
           <ArrowPassPrev onClick={() => controlPicture(-1)}>
             &#10094;
@@ -136,24 +124,40 @@ export default function Product() {
                   <span>frete e prazo</span>
                 </p>
                 <FieldShippingContainer>
-                  <InputShippingCost
-                    maxLength={9}
+                  <NumberFormat
+                    // eslint-disable-next-line no-use-before-define
+                    customInput={InputShippingCost}
                     value={cep}
-                    onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
+                    format="#####-###"
+                    onValueChange={({ value }) => setCep(value)}
                   />
-                  <ButtonShippingCost
-                    onClick={() => handleCalculateShipping()}
-                  >
-                    {isLoading
-                      ? <Loader type="TailSpin" color="#000" height={25} width={30} />
-                      : <ShippingIcon />}
+                  <ButtonShippingCost onClick={() => handleCalculateShipping()}>
+                    {isLoading ? (
+                      <Loader
+                        type="TailSpin"
+                        color="#000"
+                        height={25}
+                        width={30}
+                      />
+                    ) : (
+                      <ShippingIcon />
+                    )}
                   </ButtonShippingCost>
                 </FieldShippingContainer>
+                <DeliveryValue>
+                  {shippingCost && (
+                    <p>
+                      SEDEX - 6 dias úteis -
+                      {' '}
+                      <span>{convertToBRL(shippingCost)}</span>
+                    </p>
+                  )}
+                </DeliveryValue>
               </ShippingCostContainer>
-              <ButtonAddCart onClick={handleAddCart}>Adicione ao carrinho</ButtonAddCart>
-              <ButtonBuyNow
-                onClick={handleBuyNow}
-              >
+              <ButtonAddCart onClick={handleAddCart}>
+                Adicione ao carrinho
+              </ButtonAddCart>
+              <ButtonBuyNow onClick={handleBuyNow}>
                 Comprar agora
               </ButtonBuyNow>
             </>
@@ -176,12 +180,30 @@ export default function Product() {
       </DescriptionProduct>
       <TitleSection>Acompanha</TitleSection>
       <DescriptionProduct>
-        {product.contains.map((item) => <p key={item.item}>{item.item}</p>)}
+        {product.contains.map((item) => (
+          <p key={item.item}>{item.item}</p>
+        ))}
       </DescriptionProduct>
       <BuyNow id={productId} total={product.value} />
     </ContainerCenter>
   );
 }
+
+const DeliveryValue = styled.div`
+  font-size: 15px;
+  color: #737070;
+  margin: 25px 3% 0px 3% !important;
+`;
+
+const InputShippingCost = styled(InputForm)`
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25) !important;
+  width: 72%;
+  margin-bottom: 0;
+  @media (max-width: 350px) {
+    border-radius: 24px;
+  }
+`;
 
 const DescriptionProduct = styled.div`
   font-weight: 500;
@@ -235,16 +257,6 @@ const ButtonShippingCost = styled.button`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
   cursor: pointer;
-`;
-
-const InputShippingCost = styled(InputForm)`
-  background-color: #fff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25) !important;
-  width: 72%;
-  margin-bottom: 0;
-  @media (max-width: 350px) {
-    border-radius: 24px;
-  }
 `;
 
 const ShippingCostContainer = styled.div`

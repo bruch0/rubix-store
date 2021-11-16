@@ -109,22 +109,22 @@ function Products() {
       </Search>
 
       <ProductsDisplay>
-        {products.length > 0
-          ? products.map((product) => (
+        {products.length > 0 ? (
+          products.map((product) => (
             <Product key={product.id}>
-              <ProductImg
-                onClick={() => navigate(`/product/${product.id}`)}
-                src={product.imageUrl}
-              />
+              <ImageContainer>
+                <ProductImg
+                  onClick={() => navigate(`/product/${product.id}`)}
+                  src={product.imageUrl}
+                />
+              </ImageContainer>
               <ProductInfo>
                 {product.total_qty <= 0 ? (
                   <SoldOff>Esgotado</SoldOff>
                 ) : (
                   <>
                     <Name>{product.name}</Name>
-                    <Value>
-                      {convertToBRL(product.value)}
-                    </Value>
+                    <Value>{convertToBRL(product.value)}</Value>
                     <AddToCart onClick={() => handleAddCart(product.id)}>
                       Adicionar ao carrinho
                     </AddToCart>
@@ -133,11 +133,18 @@ function Products() {
               </ProductInfo>
             </Product>
           ))
-          : <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} />}
+        ) : (
+          <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} />
+        )}
       </ProductsDisplay>
     </ProductSection>
   );
 }
+
+const ImageContainer = styled.div`
+  max-width: 300px;
+  height: 200px;
+`;
 
 const ProductSection = styled.main`
   width: 100%;
@@ -321,6 +328,9 @@ const Product = styled.div`
 const ProductImg = styled.img`
   cursor: pointer;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 22px 22px 0 0;
 `;
 
 const ProductInfo = styled.div`
