@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import cart from '../assets/icons/cart.png';
-import categoryIcon from '../assets/icons/category.png';
 import SignUpModal from './modals/SignUpModal';
 import SignInModal from './modals/SignInModal';
 import PasswordRecoverModal from './modals/PasswordRecover';
@@ -18,15 +17,15 @@ function Navbar() {
   const { setModal } = useContext(ModalContext);
 
   const categories = [
-    { icon: categoryIcon, name: '2x2x2' },
-    { icon: categoryIcon, name: '3x3x3' },
-    { icon: categoryIcon, name: '4x4x4' },
-    { icon: categoryIcon, name: '5x5x5' },
-    { icon: categoryIcon, name: 'BigCubes' },
-    { icon: categoryIcon, name: 'Pyraminx' },
-    { icon: categoryIcon, name: 'Megaminx' },
-    { icon: categoryIcon, name: 'Skewb' },
-    { icon: categoryIcon, name: 'Especial' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/2x2x2-qiyi-qidi-preto11-28ffb53d0f795f166215376389639052-640-0.jpg', name: '2x2x2' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/3x3x3-gan-356-rs-stickerless-21-453c6f1597a426a40c15842162015143-640-0.jpg', name: '3x3x3' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/cubo-magico-4x4x4-qiyi-qiyuan-w-preto-casa-do-cubo-11-1e4484572f07e5966616209367005015-640-0.jpg', name: '4x4x4' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/cubo-magico-5x5x5-yuxin-cloud-stickerless-casa-do-cubo-11-96685b895291e1c27616154017087417-640-0.jpg', name: '5x5x5' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/9x9-moyu-mf9-preto11-632a4e616b61b0a1fa15382523536421-640-0.jpg', name: 'BigCubes' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/cubo-magico-pyraminx-qiyi-qiming-a-preto-11-2fab95c94f1f8fdcd615959466215283-640-0.jpg', name: 'Pyraminx' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/cubo-magico-megaminx-moyu-yj-yuhu-m-stickerless-11-7c8a3fff7f548b0aac15992398088482-50-0.jpg', name: 'Megaminx' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/qichengapreto11-4f7eef7b2ac661b23d14992937140231-640-0.jpg', name: 'Skewb' },
+    { icon: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/241/323/products/timer11-03eee93f806cbdeb7415132909669947-640-0.jpg', name: 'Especial' },
   ];
 
   return (
