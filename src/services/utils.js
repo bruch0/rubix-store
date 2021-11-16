@@ -31,8 +31,10 @@ const getDelivery = async (cepDestino, peso) => {
     if (result.status === 200) {
       const objectResult = JSON.parse(convert.xml2json(result.data, { compact: true, spaces: 2 }));
       const value = Number(objectResult.Servicos.cServico.Valor._text.replace(',', '.')) * 100;
-      i = 10;
-      return value;
+      if (value !== 0) {
+        i = 10;
+        return value;
+      }
     }
   }
 };
