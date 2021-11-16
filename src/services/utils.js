@@ -23,15 +23,17 @@ const throwSuccess = (title) => Swal.fire({
 });
 
 const getDelivery = async (cepDestino, peso) => {
-  try {
+  for (let i = 0; i < 10; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
     const result = await axios.get(
-      `https://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?sCepOrigem=20550110&sCepDestino=${cepDestino}&nVlPeso=${peso}&nCdFormato=1&nVlComprimento=20&nVlAltura=10&nVlLargura=17&nVlDiametro=0&nCdServico=04014&nCdEmpresa=&sDsSenha=&sCdMaoPropria=n&nVlValorDeclarado=0&sCdAvisoRecebimento=n&StrRetorno=xml&nIndicaCalculo=1/`,
+      `https://cors-anywhere.herokuapp.com/http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx?sCepOrigem=20550110&sCepDestino=${cepDestino}&nVlPeso=${peso}&nCdFormato=1&nVlComprimento=20&nVlAltura=10&nVlLargura=17&nVlDiametro=0&nCdServico=04014&nCdEmpresa=&sDsSenha=&sCdMaoPropria=n&nVlValorDeclarado=0&sCdAvisoRecebimento=n&StrRetorno=xml&nIndicaCalculo=1`,
     );
-    const objectResult = JSON.parse(convert.xml2json(result.data, { compact: true, spaces: 2 }));
-    const value = Number(objectResult.Servicos.cServico.Valor._text.replace(',', '.')) * 100;
-    if (value !== 0) return value;
-  } catch {
-    return throwError('Não foi possível calcular o frete.');
+    if (result.status === 200) {
+      const objectResult = JSON.parse(convert.xml2json(result.data, { compact: true, spaces: 2 }));
+      const value = Number(objectResult.Servicos.cServico.Valor._text.replace(',', '.')) * 100;
+      i = 10;
+      return value;
+    }
   }
 };
 
