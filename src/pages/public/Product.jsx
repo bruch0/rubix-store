@@ -8,15 +8,15 @@ import InputForm from '../../components/InputForm';
 import { ReactComponent as ShippingIcon } from '../../assets/icons/shipping-fast.svg';
 import Button from '../../components/Button';
 import { getProduct, postCart } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import ModalContext from '../../contexts/ModalContext';
+import ContainerCenter from '../../components/ContainerCenter';
 import {
   convertToBRL,
   throwError,
   throwSuccess,
   getDelivery,
 } from '../../services/utils';
-import { useAuth } from '../../contexts/AuthContext';
-import ModalContext from '../../contexts/ModalContext';
-import ContainerCenter from '../../components/ContainerCenter';
 
 export default function Product() {
   const [product, setProduct] = useState([]);

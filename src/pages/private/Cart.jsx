@@ -150,6 +150,7 @@ const Item = styled.div`
   > div {
     display: flex;
     align-items: center;
+    width: 50%;
     &:last-child {
       margin: 20px auto;
       @media (max-width: 600px) {
@@ -157,6 +158,9 @@ const Item = styled.div`
         justify-content: space-around;
       }
     }
+  }
+  @media (max-width: 600px) {
+    width: 90%;
   }
 `;
 

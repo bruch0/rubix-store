@@ -16,8 +16,7 @@ export default function User() {
     getUserInfo(user.token)
       .then((res) => {
         setUserInfo(res.data);
-      })
-      .catch((err) => console.log(err));
+      });
   }, []);
 
   if (userInfo.length === 0) return <h1>CARREGANDO... CRIAR ALGO</h1>;

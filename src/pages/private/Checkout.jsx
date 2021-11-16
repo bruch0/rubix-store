@@ -1,57 +1,56 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Swal from 'sweetalert2';
 import Loader from 'react-loader-spinner';
-import { getDelivery } from '../../services/utils.js';
+import NumberFormat from 'react-number-format';
+import {
+  convertToBRL,
+  getDelivery,
+  throwError,
+  throwSuccess,
+} from '../../services/utils.js';
 import { getCartCheckout, buyCartCheckout } from '../../services/api.js';
 import { useAuth } from '../../contexts/AuthContext';
 import deliveryLogo from '../../assets/icons/delivery.png';
+import InputForm from '../../components/InputForm';
 
 function Checkout() {
   const [cart, setCart] = useState(null);
   const [total, setTotal] = useState(null);
   const [weight, setWeight] = useState(0);
-  const [delivery, setDelivery] = useState(0);
+  const [delivery, setDelivery] = useState(null);
   const [cep, setCep] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { user } = useAuth();
-
-  const currencyFormat = {
-    minimumFractionDigits: 2,
-    style: 'currency',
-    currency: 'BRL',
-  };
 
   useEffect(() => {
     if (user) {
-      getCartCheckout(user.userId)
-        .then((response) => {
-          setCart(response.data.cart);
-          setTotal(response.data.subTotal);
-          setWeight(response.data.totalWeight);
-        })
-        .catch(() => {
-          Swal.fire({
-            icon: 'error',
-            confirmButtonColor: '#1382e9',
-            text: 'Não autorizado',
-          });
-          navigate('/');
-        });
+      getCartCheckout(user.token).then((response) => {
+        setCart(response.data.cart);
+        setTotal(response.data.subTotal);
+        setWeight(response.data.totalWeight);
+      });
     }
   }, [user]);
+
+  async function handleCalculateShipping() {
+    setLoading(true);
+    if (cep.length !== 8) throwError('CEP Inválido!');
+    setDelivery(await getDelivery(cep, (weight / 1000)));
+    setLoading(false);
+  }
 
   return (
     <CheckoutPage isLoading={loading && cart === null ? 1 : 0}>
       <Title>Checkout</Title>
-      {cart?.length === 0 ? 'Opa, você não tem nada no carrinho'
-        : (
-          <ContainerCheckout>
-            <ProductsContainer>
-              {cart !== null ? cart.map((product) => (
+      {cart?.length === 0 ? (
+        'Opa, você não tem nada no carrinho'
+      ) : (
+        <ContainerCheckout>
+          <ProductsContainer>
+            {cart !== null
+              ? cart.map((product) => (
                 <Product key={product.productId}>
                   <Container>
                     <ProductImg src={product.productUrl} />
@@ -60,65 +59,85 @@ function Checkout() {
                   <ContainerValueQty>
                     <ProductQty>{product.productQty}</ProductQty>
                     <ProductValue>
-                      {(product.totalValue / 100).toLocaleString('pt-BR', currencyFormat)}
+                      {convertToBRL(product.totalValue)}
                     </ProductValue>
                   </ContainerValueQty>
                 </Product>
-              )) : ''}
-            </ProductsContainer>
-            <Total>
-              <Value>{((total + delivery) / 100).toLocaleString('pt-BR', currencyFormat)}</Value>
-              <p>Calcular frete e prazo</p>
-              <div>
-                <CepForm
-                  maxLength={9}
-                  value={cep}
-                  onChange={(e) => setCep(e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})+?$/, '$1-$2'))}
-                />
-                <Calculate
-                  isLoading={loading ? 1 : 0}
-                  onClick={() => {
-                    setLoading(true);
-                    getDelivery(setDelivery, cep, (weight / 1000));
-                    setTimeout(() => setLoading(false), 1000);
-                  }}
-                >
-                  {loading
-                    ? <Loader type="TailSpin" color="#000" height={25} width={30} />
-                    : <img src={deliveryLogo} alt="Calcular" />}
-                </Calculate>
-              </div>
-              <DeliveryValue>
-                {delivery !== 0 ? `SEDEX - 6 dias úteis - R$ ${(delivery / 100).toFixed(2).replace('.', ',')}` : ''}
-              </DeliveryValue>
-              <ButtonForm
-                disabled={(cep.length === 9 && delivery !== 0) ? 0 : 1}
-                onClick={() => {
-                  setLoading(true);
-                  buyCartCheckout(user.userId, total + delivery, cart)
-                    .then(() => {
-                      setCart([]);
-                      setTotal(0);
-                      setWeight(0);
-                      setDelivery(0);
-                      Swal.fire({
-                        icon: 'success',
-                        confirmButtonColor: '#1382e9',
-                        text: 'Compra realizada!',
-                      });
-                      setLoading(false);
-                    });
-                }}
+              ))
+              : ''}
+          </ProductsContainer>
+          <Total>
+            <Value>{convertToBRL(total + delivery)}</Value>
+            <p>Calcular frete e prazo</p>
+            <div>
+              <NumberFormat
+                customInput={InputShippingCost}
+                value={cep}
+                format="#####-###"
+                onValueChange={({ value }) => setCep(value)}
+              />
+              <Calculate
                 isLoading={loading ? 1 : 0}
+                onClick={() => handleCalculateShipping()}
               >
-                {loading ? <Loader type="ThreeDots" color="#FFFFFF" height={25} width={100} /> : 'Comprar'}
-              </ButtonForm>
-            </Total>
-          </ContainerCheckout>
-        )}
+                {loading ? (
+                  <Loader type="TailSpin" color="#000" height={25} width={30} />
+                ) : (
+                  <img src={deliveryLogo} alt="Calcular" />
+                )}
+              </Calculate>
+            </div>
+            <DeliveryValue>
+              {delivery && (
+                <p>
+                  SEDEX - 6 dias úteis -
+                  {' '}
+                  <span>{convertToBRL(delivery)}</span>
+                </p>
+              )}
+            </DeliveryValue>
+            <ButtonForm
+              disabled={cep.length < 8 || !delivery}
+              onClick={() => {
+                setLoading(true);
+                buyCartCheckout(total + delivery, cart, user.token).then(() => {
+                  setCart([]);
+                  setTotal(0);
+                  setWeight(0);
+                  setDelivery(0);
+                  throwSuccess('Compra realizada!');
+                  setLoading(false);
+                });
+              }}
+              isLoading={loading ? 1 : 0}
+            >
+              {loading ? (
+                <Loader
+                  type="ThreeDots"
+                  color="#FFFFFF"
+                  height={25}
+                  width={100}
+                />
+              ) : (
+                'Comprar'
+              )}
+            </ButtonForm>
+          </Total>
+        </ContainerCheckout>
+      )}
     </CheckoutPage>
   );
 }
+
+const InputShippingCost = styled(InputForm)`
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25) !important;
+  width: 72%;
+  margin-bottom: 0;
+  @media (max-width: 350px) {
+    border-radius: 24px;
+  }
+`;
 
 const CheckoutPage = styled.main`
   width: 100%;
@@ -161,7 +180,7 @@ const Product = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
   border-radius: 22px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   margin-bottom: 25px;
@@ -201,14 +220,14 @@ const Container = styled.div`
   @media (max-width: 1000px) {
     min-width: 250px;
   }
-  
+
   @media (max-width: 800px) {
     min-width: 100%;
   }
 `;
 
 const ContainerValueQty = styled.div`
-display: flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   min-width: 300px;
@@ -216,7 +235,7 @@ display: flex;
   @media (max-width: 1000px) {
     min-width: 250px;
   }
-  
+
   @media (max-width: 800px) {
     min-width: 90%;
     flex-direction: row-reverse;
@@ -234,13 +253,13 @@ const ProductQty = styled.div`
   font-weight: 600;
   border-radius: 22px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 `;
 
 const ProductValue = styled.p`
   font-size: 2vw;
   font-weight: 700;
-  color: #1382E9;
+  color: #1382e9;
   margin-right: 30px;
 
   @media (max-width: 1500px) {
@@ -250,7 +269,7 @@ const ProductValue = styled.p`
   @media (max-width: 1000px) {
     font-size: 3.5vw;
   }
-  
+
   @media (max-width: 800px) {
     font-size: 5vw;
   }
@@ -263,7 +282,7 @@ const Total = styled.section`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
   border-radius: 22px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 
@@ -289,7 +308,7 @@ const Value = styled.div`
   text-align: center;
   font-size: 3vw;
   font-weight: 700;
-  color: #1382E9;
+  color: #1382e9;
   padding-bottom: 5px;
   border-bottom: 2px solid black;
 
@@ -307,7 +326,7 @@ const CepForm = styled.input`
   outline: none;
   height: 35px;
   width: 70%;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
   border: 0px;
@@ -321,7 +340,7 @@ const Calculate = styled.button`
   width: 20%;
   border: 0px;
   border-radius: 22px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   pointer-events: ${(props) => (props.isLoading ? 'none' : 'all')};
@@ -331,6 +350,9 @@ const DeliveryValue = styled.p`
   font-size: 15px;
   color: #737070;
   margin: 25px 3% 0px 3% !important;
+  span {
+    font-weight: bold;
+  }
 `;
 
 const ButtonForm = styled.button`
@@ -338,7 +360,7 @@ const ButtonForm = styled.button`
   height: 45px;
   border: none;
   background-color: ${(props) => (props.disabled ? '#2e2f2e' : '#16F948')};
-  color: #FFF;
+  color: #fff;
   border-radius: 22px;
   cursor: pointer;
   font-weight: 700;
