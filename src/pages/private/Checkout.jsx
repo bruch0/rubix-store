@@ -211,7 +211,7 @@ const ProductName = styled.p`
     font-size: 1.5vw;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 800px) {
     font-size: 3.5vw;
   }
 `;
