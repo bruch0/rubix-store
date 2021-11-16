@@ -14,7 +14,7 @@ import { getCartCheckout, buyCartCheckout } from '../../services/api.js';
 import { useAuth } from '../../contexts/AuthContext';
 import deliveryLogo from '../../assets/icons/delivery.png';
 import InputForm from '../../components/InputForm';
-import Loading from '../../components/Loading.jsx';
+import Loading from '../../components/Loading';
 
 function Checkout() {
   const [cart, setCart] = useState(null);

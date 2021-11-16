@@ -91,7 +91,7 @@ const ListItemMobile = styled.div`
   margin-bottom: 10px;
   padding: 5px 15px 15px 15px;
   width: 100%;
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     display: flex;
     flex-wrap: wrap;
   }
@@ -102,7 +102,7 @@ const ListItem = styled.div`
   font-size: 18px;
   display: flex;
   margin-bottom: 15px;
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     display: none;
   }
 `;
@@ -111,7 +111,7 @@ const ListItemLast = styled(ListItem)`
   justify-content: right;
   font-weight: bold;
   font-size: 22px;
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     display: flex;
     margin: 15px 0px 10px 0;
   }
@@ -126,7 +126,7 @@ const CenterContainer = styled.div`
 const ColumnName = styled(CenterContainer)`
   width: 50%;
   margin-left: 15px;
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     width: 83%;
     font-weight: bold;
   }
@@ -147,7 +147,7 @@ const ColumnQuantity = styled(CenterContainer)`
   p {
     margin-right: 20px;
   }
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     width: 50%;
   }
 `;
@@ -158,7 +158,7 @@ const ColumnValue = styled(CenterContainer)`
     margin-right: 20px;
     color: black;
   }
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     width: 50%;
   }
 `;
@@ -173,7 +173,7 @@ const HeaderListItem = styled.div`
   font-size: 20px;
   font-weight: 600;
   text-align: center;
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     display: none;
   }
 `;
@@ -205,7 +205,7 @@ const HeaderContainer = styled.div`
   @media (max-width: 600px) {
     font-size: 18px;
   }
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     flex-direction: row;
     h4 {
       margin: 0 auto;
@@ -225,7 +225,7 @@ const DropdownHeader = styled.div`
   justify-content: space-between;
   margin-bottom: 25px;
   cursor: pointer;
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     flex-direction: column;
   }
 `;

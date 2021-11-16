@@ -10,7 +10,7 @@ import DropdownQuantity from '../../components/DropdownQuantity';
 import Loading from '../../components/Loading';
 
 export default function Cart() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(null);
   const [renderCart, setRenderCart] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -83,7 +83,7 @@ const EmptyText = styled.h2`
 
 const ButtonBackHome = styled(Button)`
   margin-top: 20px;
-  width: 422px;
+  width: 100%;
   height: 80px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   background-color: #ebebeb;
@@ -121,6 +121,10 @@ const ValueItem = styled.h4`
   @media (max-width: 600px) {
     font-size: 21px;
   }
+
+  @media (max-width: 400px) {
+    margin: auto 10px;
+  }
 `;
 
 const NameItem = styled.h3`
@@ -143,6 +147,7 @@ const ImageItem = styled.img`
 const Item = styled.div`
   display: flex;
   justify-content: space-between;
+  padding-top: 10px;
   background: #ebebeb;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
@@ -151,17 +156,24 @@ const Item = styled.div`
   > div {
     display: flex;
     align-items: center;
-    width: 50%;
+    width: 40%;
     &:last-child {
       margin: 20px auto;
       @media (max-width: 600px) {
         width: 90%;
         justify-content: space-around;
       }
+
+      @media (max-width: 400px) {
+        margin: 15px 3%
+      }
+    }
+    &:nth-last-child(2) {
+        width: 95%;
     }
   }
   @media (max-width: 600px) {
-    width: 90%;
+    width: 100%;
   }
 `;
 
