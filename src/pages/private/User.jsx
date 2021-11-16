@@ -8,7 +8,6 @@ import PurchasesDropdown from '../../components/PurchasesDropdown';
 
 export default function User() {
   const [userInfo, setUserInfo] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const { user } = useAuth();
 

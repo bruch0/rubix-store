@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 import DropdownQuantity from '../../components/DropdownQuantity';
 
 export default function Cart() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(null);
   const [renderCart, setRenderCart] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
