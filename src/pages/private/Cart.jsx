@@ -147,7 +147,6 @@ const ImageItem = styled.img`
 const Item = styled.div`
   display: flex;
   justify-content: space-between;
-  padding-top: 10px;
   background: #ebebeb;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 22px;
@@ -156,7 +155,7 @@ const Item = styled.div`
   > div {
     display: flex;
     align-items: center;
-    width: 40%;
+    width: 50%;
     &:last-child {
       margin: 20px auto;
       @media (max-width: 600px) {
