@@ -23,12 +23,13 @@ function RecoverPassword() {
   useEffect(() => {
     authorizeRecover(token)
       .then((response) => {
-        setEmail(response.data[0].userEmail);
+        setEmail(response.data.userEmail);
       })
       .catch((error) => {
         if (error.response.status === 408) {
           throwError('Token expirado');
-        } if (error.response.status === 404) {
+        }
+        if (error.response.status === 404) {
           throwError('Token inválido');
         }
         navigate('/');
@@ -66,7 +67,9 @@ function RecoverPassword() {
           }
         }}
       />
-      <ButtonForm isLoading={loading ? 1 : 0} onClick={requestChange}>Trocar senha</ButtonForm>
+      <ButtonForm isLoading={loading ? 1 : 0} onClick={requestChange}>
+        Trocar senha
+      </ButtonForm>
     </PasswordRoute>
   );
 }
@@ -82,10 +85,10 @@ const PasswordRoute = styled.main`
   align-items: center;
 
   > div {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 `;
 

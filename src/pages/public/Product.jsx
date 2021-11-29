@@ -47,7 +47,7 @@ export default function Product() {
   async function handleCalculateShipping() {
     setIsLoading(true);
     if (cep.length !== 8) throwError('CEP Inválido!');
-    setShippingCost(await getDelivery(cep, quantity * 0.15));
+    setShippingCost(await getDelivery());
     setIsLoading(false);
   }
 
@@ -72,11 +72,10 @@ export default function Product() {
   };
 
   useEffect(() => {
-    getProduct(productId)
-      .then((res) => {
-        setProduct(res.data);
-        setTimeout(() => setLoading(false), 1000);
-      });
+    getProduct(productId).then((res) => {
+      setProduct(res.data);
+      setTimeout(() => setLoading(false), 1000);
+    });
   }, []);
 
   if (loading) return <Loading />;
@@ -114,8 +113,7 @@ export default function Product() {
               ))}
             </SelectQuantity>
             <AvailableQuantity>
-              {product.total_qty}
-              {' '}
+              {product.total_qty}{' '}
               {product.total_qty > 1 ? 'disponíveis' : 'disponível'}
             </AvailableQuantity>
           </QuantityContainer>
@@ -123,9 +121,7 @@ export default function Product() {
             <>
               <ShippingCostContainer>
                 <p>
-                  Calcular
-                  {' '}
-                  <span>frete e prazo</span>
+                  Calcular <span>frete e prazo</span>
                 </p>
                 <FieldShippingContainer>
                   <NumberFormat
@@ -151,8 +147,7 @@ export default function Product() {
                 <DeliveryValue>
                   {shippingCost && (
                     <p>
-                      SEDEX - 6 dias úteis -
-                      {' '}
+                      SEDEX - 6 dias úteis -{' '}
                       <span>{convertToBRL(shippingCost)}</span>
                     </p>
                   )}
@@ -161,9 +156,7 @@ export default function Product() {
               <ButtonAddCart onClick={handleAddCart}>
                 Adicione ao carrinho
               </ButtonAddCart>
-              <ButtonBuyNow onClick={handleBuyNow}>
-                Comprar agora
-              </ButtonBuyNow>
+              <ButtonBuyNow onClick={handleBuyNow}>Comprar agora</ButtonBuyNow>
             </>
           ) : (
             <>
@@ -392,7 +385,7 @@ const ContainerPictureShow = styled.div`
   margin-bottom: 15px;
   @media (max-width: 500px) {
     height: 300px;
-    width: 100%
+    width: 100%;
   }
 `;
 
