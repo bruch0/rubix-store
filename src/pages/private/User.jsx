@@ -12,13 +12,13 @@ export default function User() {
   const [loading, setLoading] = useState(true);
 
   const { user } = useAuth();
+  console.log(user);
 
   useEffect(() => {
-    getUserInfo(user.token)
-      .then((res) => {
-        setUserInfo(res.data);
-        setTimeout(() => setLoading(false), 1000);
-      });
+    getUserInfo(user.token).then((res) => {
+      setUserInfo(res.data);
+      setTimeout(() => setLoading(false), 1000);
+    });
   }, []);
 
   if (loading) {

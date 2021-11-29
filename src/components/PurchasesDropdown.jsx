@@ -26,19 +26,19 @@ export default function PurchasesDropdown({ purchase }) {
           </HeaderContainer>
         </DropdownHeader>
       )}
-      {isOpen && (
-        <DropdownListContainer onClick={() => setIsOpen(!isOpen)}>
+      {isOpen ? (
+        <DropdownListContainer onClick={() => setIsOpen(!isOpen ? 1 : 0)}>
           <HeaderListItem>
             <ColumnImage />
             <ColumnName>Nome do produto</ColumnName>
             <ColumnQuantity>Quantidade</ColumnQuantity>
             <ColumnValue>Valor</ColumnValue>
           </HeaderListItem>
-          {purchase.bought_products.map((item) => (
-            <MainContainerItem key={item.id}>
+          {purchase.boughtProducts.map((item) => (
+            <MainContainerItem key={item.imgUrl}>
               <ListItem>
                 <ColumnImage>
-                  <img src={item.imageUrl} alt={item.name} />
+                  <img src={item.imgUrl} alt={item.name} />
                 </ColumnImage>
                 <ColumnName>{item.name}</ColumnName>
                 <ColumnQuantity>{item.qty}</ColumnQuantity>
@@ -69,12 +69,13 @@ export default function PurchasesDropdown({ purchase }) {
             </ColumnValueBlue>
           </ListItemLast>
         </DropdownListContainer>
+      ) : (
+        ''
       )}
     </DropdownContainer>
   );
 }
-const MainContainerItem = styled.div`
-`;
+const MainContainerItem = styled.div``;
 
 const InfoQtyValueContainer = styled.div`
   display: flex;

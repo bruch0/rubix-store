@@ -16,38 +16,48 @@ function getConfig(token) {
   };
 }
 
-const postSignIn = (email, password) => api.post('/auth/sign-in', {
-  email,
-  password,
-});
+const postSignIn = (email, password) =>
+  api.post('/auth/sign-in', {
+    email,
+    password,
+  });
 
-const postSignUp = (name, email, password, cpf, phone) => api.post('/auth/sign-up', {
-  name,
-  email,
-  password,
-  cpf,
-  phone,
-});
+const postSignUp = (name, email, password, cpf, phone) =>
+  api.post('/auth/sign-up', {
+    name,
+    email,
+    password,
+    cpf,
+    phone,
+  });
 
-const postCart = (productId, productQty, token, isUpdate = false) => api.post('/cart', {
-  product_id: productId,
-  product_qty: Number(productQty),
-  isUpdate,
-}, getConfig(token));
+const postCart = (productId, productQty, token, isUpdate = false) =>
+  api.post(
+    '/cart',
+    {
+      product_id: productId,
+      product_qty: Number(productQty),
+      isUpdate,
+    },
+    getConfig(token)
+  );
 
 const getCart = (token) => api.get('/cart', getConfig(token));
 
-const getProduct = (productId) => api.get(`/product/${productId}`);
+const getProduct = (productId) => api.get(`/products/${productId}`);
 
-const requestPasswordEmail = (email) => api.post('/recover-password', { email });
+const requestPasswordEmail = (email) =>
+  api.post('/recover-password', { email });
 
 const authorizeRecover = (token) => api.post('/authorize-password', { token });
 
-const changePassword = (email, newPassword) => api.post('/change-password', { email, newPassword });
+const changePassword = (email, newPassword) =>
+  api.post('/change-password', { email, newPassword });
 
 const getCartCheckout = (token) => api.get('/checkout', getConfig(token));
 
-const buyCartCheckout = (totalValue, cart, token) => api.post('/buy-checkout', { totalValue, cart }, getConfig(token));
+const buyCartCheckout = (totalValue, cart, token) =>
+  api.post('/checkout', { totalValue, cart }, getConfig(token));
 
 const getUserInfo = (token) => api.get('/user', getConfig(token));
 export {
