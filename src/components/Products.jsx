@@ -158,6 +158,11 @@ function Products() {
 const ImageContainer = styled.div`
   max-width: 300px;
   height: 200px;
+
+  @media (max-width: 600px) {
+    max-width: unset;
+	height: unset;
+  }
 `;
 
 const ProductSection = styled.main`
